@@ -11,6 +11,7 @@ public class ArrayDeque<T> {
     static public final int MIN_SIZE_APPLICABLE = 16;
     static public final int INIT_CAPACITY = 8;
     static public final int INCR_FACTOR = Math.max(2, (int)Math.ceil(0.5 / MIN_USAGE)) ;
+    static public final double DECR_FACTOR = Math.min(0.5, MIN_USAGE / 0.5) ; // edit by Hedy
 
     /*
         Variables
@@ -131,7 +132,7 @@ public class ArrayDeque<T> {
         T elem = _items[_idxFirst];
         _size -= 1;
         if (_capacity >= MIN_SIZE_APPLICABLE && usage() < MIN_USAGE) {
-            _resize((int)Math.ceil((double)_capacity * (usage() + MIN_USAGE) ));
+            _resize((int)Math.ceil(DECR_FACTOR*_capacity)); // edit by Hedy
         }
         return elem;
     }
@@ -145,7 +146,7 @@ public class ArrayDeque<T> {
         T elem = _items[_idxLast];
         _size -= 1;
         if (_capacity >= MIN_SIZE_APPLICABLE && usage() < MIN_USAGE) {
-            _resize((int)Math.ceil((double)_capacity * (usage() + MIN_USAGE) ));
+            _resize((int)Math.ceil(DECR_FACTOR*_capacity)); // edit by Hedy
         }
         return elem;
     }

@@ -139,28 +139,28 @@ public class LinkedListDeque<T>{
     }
 
 
-    /**justfortest*/
-    public static void main(String[]arg){
-        LinkedListDeque<Integer>testList=new LinkedListDeque<>();
-        System.out.println(testList.isEmpty());
-        System.out.println(testList.size());
-        testList.printDeque();
-        System.out.println(testList.get(0));
-        System.out.println(testList.getRecurisive(0));
-        testList.addFirst(4);
-        testList.addLast(5);
-        testList.addFirst(3);
-        testList.addFirst(2);
-        testList.addFirst(1);
-        System.out.println(testList.get(4));
-        System.out.println(testList.get(5));
-        System.out.println(testList.getRecurisive(3));
-        System.out.println(testList.getRecurisive(5));
-        testList.printDeque();
-        System.out.println(testList.removeFirst());
-        System.out.println(testList.removeLast());
-        testList.printDeque();
-        LinkedListDeque copyTestList=new LinkedListDeque(testList);
-        copyTestList.printDeque();
-    }
+//    /**justfortest*/
+//    public static void main(String[]arg){
+//        LinkedListDeque<Integer>testList=new LinkedListDeque<>();
+//        System.out.println(testList.isEmpty());
+//        System.out.println(testList.size());
+//        testList.printDeque();
+//        System.out.println(testList.get(0));
+//        System.out.println(testList.getRecurisive(0));
+//        testList.addFirst(4);
+//        testList.addLast(5);
+//        testList.addFirst(3);
+//        testList.addFirst(2);
+//        testList.addFirst(1);
+//        System.out.println(testList.get(4));
+//        System.out.println(testList.get(5));
+//        System.out.println(testList.getRecurisive(3));
+//        System.out.println(testList.getRecurisive(5));
+//        testList.printDeque();
+//        System.out.println(testList.removeFirst());
+//        System.out.println(testList.removeLast());
+//        testList.printDeque();
+//        LinkedListDeque copyTestList=new LinkedListDeque(testList);
+//        copyTestList.printDeque();
+//    }
 }

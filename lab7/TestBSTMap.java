@@ -1,4 +1,5 @@
 import static org.junit.Assert.*;
+import java.util.Set;
 import org.junit.Test;
 
 /** Tests by Brendan Hu, Spring 2015, revised for 2016 by Josh Hug */
@@ -16,7 +17,7 @@ public class TestBSTMap {
 	    }
     }
 
-    //assumes put/size/containsKey/get work
+    //assumes put/size/containsKey/get/set work
 	@Test
     public void sanityClearTest() {
     	BSTMap<String, Integer> b = new BSTMap<String, Integer>();
@@ -25,8 +26,15 @@ public class TestBSTMap {
             //make sure put is working via containsKey and get
             assertTrue( null != b.get("hi" + i) && (b.get("hi"+i).equals(1+i))
                         && b.containsKey("hi" + i));
+            //make sure keySet is ok --added by Hedy
+            assertTrue(b.keySet().contains("hi"+i));
         }
         assertEquals(455, b.size());
+        assertEquals(455,b.keySet().size());
+
+        //to see if printing right --added by Hedy
+        b.printInOrder();
+
         b.clear();
         assertEquals(0, b.size());
         for (int i = 0; i < 455; i++) {

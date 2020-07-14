@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import edu.princeton.cs.algs4.StdDraw;
 import java.awt.Color;
 import edu.princeton.cs.algs4.StdRandom;
+import java.lang.Long;
 
 public class ComplexOomage implements Oomage {
     protected List<Integer> params;
@@ -13,7 +14,7 @@ public class ComplexOomage implements Oomage {
     public int hashCode() {
         int total = 0;
         for (int x : params) {
-            total = total * 256;
+            total = total * 257; //orginal 256, hedy change to 257 which is a prime number
             total = total + x;
         }
         return total;
@@ -86,5 +87,6 @@ public class ComplexOomage implements Oomage {
         randomComplexOomage().draw(0.75, 0.75, 1.5);
         randomComplexOomage().draw(0.25, 0.75, 1.5);
         randomComplexOomage().draw(0.75, 0.25, 1.5);
+
     }
 } 

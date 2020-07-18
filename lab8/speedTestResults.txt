@@ -1,0 +1,31 @@
+Insert In Order Speed Test:
+This program inserts lexicographically increasing Stringsinto Maps as <String, Integer> pairs.
+Please enter a positive integer: 10000
+class ULLMap: 0.87 sec
+class MyHashMap: 0.02 sec
+Java's Built-in HashMap: 0.00 sec
+
+Please enter a positive integer: 100000
+class ULLMap:--Stack Overflow -- couldn't add 1000000 strings.
+class MyHashMap: 0.13 sec
+Java's Built-in HashMap: 0.09 sec
+
+
+Insert Random Speed Test:
+This program inserts random Strings of length L. What would you like L to be?: 10000
+Please enter a positive integer: 10000
+class ULLMap: 1.72 sec
+class MyHashMap: 1.27 sec
+Java's Built-in HashMap: 1.21 sec
+
+Please enter a positive integer: 100000
+class ULLMap:--Stack Overflow -- couldn't add 1000000 strings.
+class MyHashMap: 12.15 sec
+Java's Built-in HashMap: 11.96 sec	
+
+
+
+
+
+
+

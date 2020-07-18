@@ -1,12 +1,28 @@
 Insert In Order Speed Test:
+This program inserts lexicographically increasing Strings into Maps as <String, Integer> pairs.
 Please enter a positive integer: 10000
-class ULLMap: 1.65 sec
-class BSTMap: 1.62 sec
-Java's Built-in TreeMap: 0.01 sec
+class ULLMap: 1.41 sec
+class BSTMap: 1.38 sec
+Java's Built-in TreeMap: 0.02 sec
 Java's Built-in HashMap: 0.00 sec
 
+This program inserts lexicographically increasing Strings into Maps as <String, Integer> pairs.
+Please enter a positive integer: 100000
+class ULLMap: --Stack Overflow -- couldn't add 100000 strings.
+class BSTMap: --Stack Overflow -- couldn't add 100000 strings.
+Java's Built-in TreeMap: 0.08 sec
+Java's Built-in HashMap: 0.06 sec
+
+
 Insert Random Speed Test:
+This program inserts random Strings of length L. Please enter desired length of each string: 10000
 Please enter a positive integer: 10000
-class ULLMap: 3.64 sec
-class BSTMap: 2.11 sec
-Java's Built-in TreeMap: 1.99 sec
+class ULLMap: 1.72 sec
+class BSTMap: 1.17 sec
+Java's Built-in TreeMap: 1.15 sec
+
+Please enter a positive integer: 100000
+class ULLMap: --Stack Overflow -- couldn't add 100000 strings of length 10000.
+class BSTMap: 12.75 sec
+Java's Built-in TreeMap: 11.64 sec
+

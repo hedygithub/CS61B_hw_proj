@@ -53,12 +53,16 @@ public class KDTree {
 
     public Point nearest(double x, double y) {
         Point targetPoint = new Point(x, y);
-        double distance = Point.distance(targetPoint, root.point);
-        Node nearestNode = nearest(root, root, targetPoint, initialBasedOnWhichAxis, distance);
+        Node nearestNode = nearest(root, root, targetPoint, initialBasedOnWhichAxis);
         return nearestNode.point;
     }
 
-    private Node nearest(Node currentNode, Node nearestNode, Point targetPoint, int basedOnAxis, double distance) {
+    private Node nearest(Node currentNode, Node nearestNode, Point targetPoint, int basedOnAxis) {
+        double distance = Point.distance(targetPoint, nearestNode.point);
+        if(distance == 0) {
+            //prune all
+            return nearestNode;
+        }
         //choose better side
         boolean left0 = basedOnAxis == 0 && targetPoint.getX() < currentNode.point.getX();
         boolean left1 = basedOnAxis == 1 && targetPoint.getY() < currentNode.point.getY();
@@ -68,16 +72,15 @@ public class KDTree {
                 double newDistance = Point.distance(targetPoint, currentNode.leftNode.point);
                 if(newDistance < distance) {
                     nearestNode = currentNode.leftNode;
-                    distance = newDistance;
                 }
-                nearestNode = nearest(currentNode.leftNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions, distance);
+                nearestNode = nearest(currentNode.leftNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions);
             }
             //bad side
             double nearestDistanceInBadArea;
             if (basedOnAxis == 0) {
-                nearestDistanceInBadArea = currentNode.point.getX() - targetPoint.getX();
+                nearestDistanceInBadArea = Point.distance(targetPoint, new Point(currentNode.point.getX(), targetPoint.getY()));
             } else {
-                nearestDistanceInBadArea = currentNode.point.getY() - targetPoint.getY();
+                nearestDistanceInBadArea = Point.distance(targetPoint, new Point(targetPoint.getX(), currentNode.point.getY()));
             }
             distance = Point.distance(targetPoint, nearestNode.point);
 
@@ -89,9 +92,8 @@ public class KDTree {
                     double newDistance = Point.distance(targetPoint, currentNode.rightNode.point);
                     if(newDistance < distance) {
                         nearestNode = currentNode.rightNode;
-                        distance = newDistance;
                     }
-                    nearestNode = nearest(currentNode.rightNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions, distance);
+                    nearestNode = nearest(currentNode.rightNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions);
                 }
             }
         } else {
@@ -100,17 +102,16 @@ public class KDTree {
                 double newDistance = Point.distance(targetPoint, currentNode.rightNode.point);
                 if(newDistance < distance) {
                     nearestNode = currentNode.rightNode;
-                    distance = newDistance;
                 }
-                nearestNode = nearest(currentNode.rightNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions, distance);
+                nearestNode = nearest(currentNode.rightNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions);
             }
 
             //bad side
             double nearestDistanceInBadArea;
             if (basedOnAxis == 0) {
-                nearestDistanceInBadArea = targetPoint.getX() - currentNode.point.getX() ;
+                nearestDistanceInBadArea = Point.distance(targetPoint, new Point(currentNode.point.getX(), targetPoint.getY()));
             } else {
-                nearestDistanceInBadArea = targetPoint.getY() - currentNode.point.getY();
+                nearestDistanceInBadArea = Point.distance(targetPoint, new Point(targetPoint.getX(), currentNode.point.getY()));
             }
             distance = Point.distance(targetPoint, nearestNode.point);
 
@@ -122,9 +123,8 @@ public class KDTree {
                     double newDistance = Point.distance(targetPoint, currentNode.leftNode.point);
                     if(newDistance < distance) {
                         nearestNode = currentNode.leftNode;
-                        distance = newDistance;
                     }
-                    nearestNode = nearest(currentNode.leftNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions, distance);
+                    nearestNode = nearest(currentNode.leftNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions);
                 }
             }
         }

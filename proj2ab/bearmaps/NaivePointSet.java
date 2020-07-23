@@ -17,9 +17,10 @@ public class NaivePointSet implements PointSet{
     public Point nearest(double x, double y) {
         Point targetPoint = new Point(x, y);
         Point nearestPoint = points.get(0);
-        double distance = Point.distance(targetPoint, nearestPoint);
         for(int i = 1; i < points.size(); i++) {
-            if(distance > Point.distance(targetPoint, points.get(i))) {
+            double distance = Point.distance(targetPoint, nearestPoint);
+            double newDistance = Point.distance(targetPoint, points.get(i));
+            if(newDistance < distance) {
                 nearestPoint = points.get(i);
             }
         }

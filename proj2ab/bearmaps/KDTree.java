@@ -85,11 +85,10 @@ public class KDTree {
         double newDistance = Point.distance(targetPoint, currentNode.point);
         if(newDistance < distance) {
             nearestNode = currentNode;
-            distance = newDistance;
         }
 
         /* prune all. */
-        if(distance == 0) {
+        if(newDistance == 0) {
             return nearestNode;
         }
 

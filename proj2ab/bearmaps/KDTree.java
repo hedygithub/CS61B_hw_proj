@@ -2,132 +2,135 @@ package bearmaps;
 
 import java.util.List;
 
-public class KDTree {
-    private class Node{
-        public Point point;
-        public Node leftNode;
-        public Node rightNode;
+/**
+ * KD Tree.
+ * 2 dimensions.
+ */
 
-        public Node(Point point) {
-            this.point = point;
+/* KD Tree
+ */
+public class KDTree {
+    /* KD Tree
+     * Node
+     */
+    private class Node {
+        private Point point;
+        private int direction;
+        private Node leftNode;
+        private Node rightNode;
+
+        private Node(Point onePoint, int oneDirection) {
+            point = onePoint;
+            direction = oneDirection;
             leftNode = null;
             rightNode = null;
         }
     }
 
-    public Node root;
-    private int initialBasedOnWhichAxis = 0; //0: x, 1: y
+    private Node root;
+    /* x, y
+     */
     private int dimensions = 2;
+    /* 0: x, 1: y */
+    private int initialDirection = 0;
 
     /* assume points has at least size 1
     * not perfectly balanced version
     * start with x
-    * */
-    public KDTree(List<Point> points){
-        root = new Node(points.get(0));
-        for(int i = 1; i < points.size(); i++) {
-            Node newNode = new Node(points.get(i));
-            insertNewNode(root, newNode, initialBasedOnWhichAxis);
+    */
+    public KDTree(List<Point> points) {
+        root = new Node(points.get(0), initialDirection);
+        for (int i = 1; i < points.size(); i++) {
+            root = insertNewNode(root, points.get(i), initialDirection);
         }
     }
-    private void insertNewNode(Node currentNode, Node newNode, int basedOnAxis) {
-        boolean left0 = basedOnAxis == 0 && newNode.point.getX() < currentNode.point.getX();
-        boolean left1 = basedOnAxis == 1 && newNode.point.getY() < currentNode.point.getY();
-        if(left0 || left1) {
-                if(currentNode.leftNode == null) {
-                    currentNode.leftNode = newNode;
-                    return;
-                } else {
-                    insertNewNode(currentNode.leftNode, newNode, (basedOnAxis + 1) % dimensions);
-                }
-            } else {
-                if(currentNode.rightNode == null) {
-                    currentNode.rightNode = newNode;
-                    return;
-                } else {
-                    insertNewNode(currentNode.rightNode, newNode, (basedOnAxis + 1) % dimensions);
-                }
-            }
-        }
 
+    private Node insertNewNode(Node currentNode, Point newPoint, int direction) {
+        if (currentNode == null) {
+            return new Node(newPoint, direction);
+        }
+        direction = (currentNode.direction + 1) % dimensions;
+        boolean isGoLeft = isGoLeft(currentNode, newPoint);
+        if (isGoLeft) {
+            currentNode.leftNode = insertNewNode(currentNode.leftNode, newPoint, direction);
+        } else {
+            currentNode.rightNode = insertNewNode(currentNode.rightNode, newPoint, direction);
+        }
+        return currentNode;
+    }
+
+    private boolean isGoLeft(Node currentNode, Point onePoint) {
+        boolean goLeft;
+        if (currentNode.direction == 0) {
+            goLeft = onePoint.getX() < currentNode.point.getX();
+        } else {
+            goLeft = onePoint.getY() < currentNode.point.getY();
+        }
+        return goLeft;
+    }
 
     public Point nearest(double x, double y) {
         Point targetPoint = new Point(x, y);
-        Node nearestNode = nearest(root, root, targetPoint, initialBasedOnWhichAxis);
+        Node nearestNode = nearest(root, root, targetPoint);
         return nearestNode.point;
     }
 
-    private Node nearest(Node currentNode, Node nearestNode, Point targetPoint, int basedOnAxis) {
-        double distance = Point.distance(targetPoint, nearestNode.point);
-        if(distance == 0) {
-            //prune all
+    private Node nearest(Node currentNode, Node nearestNode, Point targetPoint) {
+        if (currentNode == null) {
             return nearestNode;
         }
-        //choose better side
-        boolean left0 = basedOnAxis == 0 && targetPoint.getX() < currentNode.point.getX();
-        boolean left1 = basedOnAxis == 1 && targetPoint.getY() < currentNode.point.getY();
-        if(left0 || left1) {
-            //good side in left
-            if(currentNode.leftNode != null) {
-                double newDistance = Point.distance(targetPoint, currentNode.leftNode.point);
-                if(newDistance < distance) {
-                    nearestNode = currentNode.leftNode;
-                }
-                nearestNode = nearest(currentNode.leftNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions);
-            }
-            //bad side
-            double nearestDistanceInBadArea;
-            if (basedOnAxis == 0) {
-                nearestDistanceInBadArea = Point.distance(targetPoint, new Point(currentNode.point.getX(), targetPoint.getY()));
-            } else {
-                nearestDistanceInBadArea = Point.distance(targetPoint, new Point(targetPoint.getX(), currentNode.point.getY()));
-            }
-            distance = Point.distance(targetPoint, nearestNode.point);
+        /* old nearest distance. */
+        double distance = Point.distance(targetPoint, nearestNode.point);
+        /* new nearest distance. */
+        double newDistance = Point.distance(targetPoint, currentNode.point);
+        if(newDistance < distance) {
+            nearestNode = currentNode;
+            distance = newDistance;
+        }
 
+        /* prune all. */
+        if(distance == 0) {
+            return nearestNode;
+        }
+
+        /* choose better side. */
+        boolean isGoLeft = isGoLeft(currentNode, targetPoint);
+
+        if(isGoLeft) {
+            /* good side in left. */
+            nearestNode = nearest(currentNode.leftNode, nearestNode, targetPoint);
+            distance = Point.distance(targetPoint, nearestNode.point);
+            /* bad side. */
+            double nearestDistanceInBadArea = possibleNearestDistance(currentNode, targetPoint);
             if (nearestDistanceInBadArea >= distance) {
-                //prune
+                /* prune. */
                 return nearestNode;
             } else {
-                if(currentNode.rightNode != null) {
-                    double newDistance = Point.distance(targetPoint, currentNode.rightNode.point);
-                    if(newDistance < distance) {
-                        nearestNode = currentNode.rightNode;
-                    }
-                    nearestNode = nearest(currentNode.rightNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions);
-                }
+                nearestNode = nearest(currentNode.rightNode, nearestNode, targetPoint);
             }
         } else {
-            //good side in right
-            if(currentNode.rightNode != null) {
-                double newDistance = Point.distance(targetPoint, currentNode.rightNode.point);
-                if(newDistance < distance) {
-                    nearestNode = currentNode.rightNode;
-                }
-                nearestNode = nearest(currentNode.rightNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions);
-            }
-
-            //bad side
-            double nearestDistanceInBadArea;
-            if (basedOnAxis == 0) {
-                nearestDistanceInBadArea = Point.distance(targetPoint, new Point(currentNode.point.getX(), targetPoint.getY()));
-            } else {
-                nearestDistanceInBadArea = Point.distance(targetPoint, new Point(targetPoint.getX(), currentNode.point.getY()));
-            }
+            /* good side in right. */
+            nearestNode = nearest(currentNode.rightNode, nearestNode, targetPoint);
             distance = Point.distance(targetPoint, nearestNode.point);
-
+            /* bad side. */
+            double nearestDistanceInBadArea = possibleNearestDistance(currentNode, targetPoint);
             if (nearestDistanceInBadArea >= distance) {
-                //prune
+                /* prune. */
                 return nearestNode;
             } else {
-                if(currentNode.leftNode != null) {
-                    double newDistance = Point.distance(targetPoint, currentNode.leftNode.point);
-                    if(newDistance < distance) {
-                        nearestNode = currentNode.leftNode;
-                    }
-                    nearestNode = nearest(currentNode.leftNode, nearestNode, targetPoint, (basedOnAxis + 1) % dimensions);
-                }
+                nearestNode = nearest(currentNode.leftNode, nearestNode, targetPoint);
             }
         }
         return nearestNode;
+    }
+
+    private double possibleNearestDistance(Node currentNode, Point targetPoint) {
+        double nearestDistanceInBadArea;
+        if (currentNode.direction == 0) {
+            nearestDistanceInBadArea = Point.distance(targetPoint, new Point(currentNode.point.getX(), targetPoint.getY()));
+        } else {
+            nearestDistanceInBadArea = Point.distance(targetPoint, new Point(targetPoint.getX(), currentNode.point.getY()));
+        }
+        return nearestDistanceInBadArea;
     }
 }

@@ -3,7 +3,6 @@ package bearmaps;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -71,7 +70,7 @@ public class KDTreeTest {
 
     @Test
     public void RandomTestKDTree() {
-        int numbers = 100;
+        int numbers = 10000;
         List<Point> points = new ArrayList<>(numbers);
         Random random = new Random(100);
         for(int i = 0; i < numbers; i++) {
@@ -80,7 +79,7 @@ public class KDTreeTest {
         KDTree KD = new KDTree(points);
         NaivePointSet Naive = new NaivePointSet(points);
 
-        int targetsNumbers = 100;
+        int targetsNumbers = 1000;
         for(int i = 0; i < targetsNumbers; i++) {
             double x = random.nextDouble() - 0.5;
             double y = random.nextDouble() - 0.5;
@@ -97,14 +96,14 @@ public class KDTreeTest {
 
     @Test
     public void RunTimeTest() {
-        int numbers = 100000;
+        int numbers = 10000;
         List<Point> points = new ArrayList<>(numbers);
         Random random = new Random(100);
         for (int i = 0; i < numbers; i++) {
             points.add(new Point(random.nextDouble() - 0.5, random.nextDouble() - 0.5));
         }
 
-        int targetsNumbers = 10000;
+        int targetsNumbers = 1000;
         List<Point> targetPoints = new ArrayList<>(targetsNumbers);
         for (int i = 0; i < targetsNumbers; i++) {
             targetPoints.add(new Point(random.nextDouble() - 0.5, random.nextDouble() - 0.5));

@@ -75,7 +75,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     @Override
     /* Returns the minimum item. Throws NoSuchElementException if the PQ is empty. */
     public T getSmallest() {
-        if(arrayHeap.isEmpty()) {
+        if (arrayHeap.isEmpty()) {
             throw new NoSuchElementException();
         } else {
             return(arrayHeap.get(0).item);
@@ -85,7 +85,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     @Override
     /* Removes and returns the minimum item. Throws NoSuchElementException if the PQ is empty. */
     public T removeSmallest() {
-        if(arrayHeap.isEmpty()) {
+        if (arrayHeap.isEmpty()) {
             throw new NoSuchElementException();
         } else {
             T smallestItem = arrayHeap.get(0).item;
@@ -102,16 +102,16 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         int sonNum1 = currentNum * 2;
         int sonNum2 = sonNum1 + 1;
         int sonNum;
-        if(sonNum1 > arrayHeap.size()) {
+        if (sonNum1 > arrayHeap.size()) {
             return;
         } else {
-            if(sonNum1 == arrayHeap.size() || arrayHeap.get(sonNum1 - 1).priority < arrayHeap.get(sonNum1 - 2).priority) {
+            if (sonNum1 == arrayHeap.size() || arrayHeap.get(sonNum1 - 1).priority < arrayHeap.get(sonNum1 - 2).priority) {
                 sonNum = sonNum1;
             } else {
                 sonNum = sonNum2;
             }
             //change order
-            if(arrayHeap.get(sonNum - 1).priority < arrayHeap.get(currentNum - 1).priority) {
+            if (arrayHeap.get(sonNum - 1).priority < arrayHeap.get(currentNum - 1).priority) {
                 Node currentNode = arrayHeap.get(currentNum - 1);
                 arrayHeap.set(currentNum - 1, arrayHeap.get(sonNum - 1));
                 arrayItemIndex.replace(arrayHeap.get(sonNum - 1).item, currentNum - 1);
@@ -133,11 +133,11 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     /* Changes the priority of the given item. Throws NoSuchElementException if the item
      * doesn't exist. */
     public void changePriority(T item, double priority){
-        if(!contains(item)) {
+        if (!contains(item)) {
             throw new NoSuchElementException();
         } else {
             int currentNum = (int)arrayItemIndex.get(item) + 1;
-            arrayHeap.set(currentNum - 1,new Node(item, priority));
+            arrayHeap.set(currentNum - 1, new Node(item, priority));
             up(currentNum);
             down(currentNum);
         }

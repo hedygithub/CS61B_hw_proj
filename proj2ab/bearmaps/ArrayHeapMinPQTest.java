@@ -26,6 +26,33 @@ public class ArrayHeapMinPQTest {
     }
 
     @Test
+    public void testChangePriority() {
+        ArrayHeapMinPQ heap = new ArrayHeapMinPQ();
+        NaiveMinPQ pQ = new NaiveMinPQ();
+        int numbers = 100; //you can change it
+        int add1 = numbers + 1;
+
+        long startHeap = System.currentTimeMillis();
+        heap.add("hi" + add1, add1);
+        for (int i = numbers; i > 0; i--) {
+            heap.add("hi" + i, i);
+            //make sure put is working via contains
+            assertTrue(heap.contains("hi" + i));
+            assertEquals("hi" + i, heap.getSmallest());
+
+            add1 = i + 1;
+            heap.changePriority("hi" + add1, i - 0.5);
+            assertEquals("hi" + add1, heap.getSmallest());
+
+            heap.changePriority("hi" + numbers, 0);
+            assertEquals("hi" + numbers, heap.getSmallest());
+
+            heap.changePriority("hi" + add1, add1);
+            heap.changePriority("hi" + numbers, numbers);
+            assertEquals("hi" + i, heap.getSmallest());
+        }
+    }
+    @Test
     public void testRunTime() {
         ArrayHeapMinPQ heap = new ArrayHeapMinPQ();
         NaiveMinPQ pQ = new NaiveMinPQ();

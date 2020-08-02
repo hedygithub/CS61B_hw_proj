@@ -1,4 +1,5 @@
-package bearmaps;
+package bearmaps.proj2ab;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,7 +106,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         if (sonNum1 > arrayHeap.size()) {
             return;
         } else {
-            if (sonNum1 == arrayHeap.size() || arrayHeap.get(sonNum1 - 1).priority < arrayHeap.get(sonNum1 - 2).priority) {
+            if (sonNum1 == arrayHeap.size() || arrayHeap.get(sonNum1 - 1).priority < arrayHeap.get(sonNum2 - 1).priority) {
                 sonNum = sonNum1;
             } else {
                 sonNum = sonNum2;

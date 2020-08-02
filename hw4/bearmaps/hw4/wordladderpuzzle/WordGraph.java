@@ -38,7 +38,7 @@ public class WordGraph implements AStarGraph<String> {
      * Computes the edit distance between a and b. From
      * https://rosettacode.org/wiki/Levenshtein_distance.
      */
-    private static int editDistance(String a, String b) {
+    public static int editDistance(String a, String b) {
         a = a.toLowerCase();
         b = b.toLowerCase();
         // i == 0
@@ -70,13 +70,13 @@ public class WordGraph implements AStarGraph<String> {
 
     @Override
     public List<WeightedEdge<String>> neighbors(String s) {
-        List<WeightedEdge<String>> neighbs = new ArrayList<>();
+        List<WeightedEdge<String>> neighbors = new ArrayList<>();
         for (String w : words) {
             if (editDistance(s, w) == 1) {
-                neighbs.add(new WeightedEdge(s, w, 1));
+                neighbors.add(new WeightedEdge(s, w, 1));
             }
         }
-        return neighbs;
+        return neighbors;
     }
 
     @Override

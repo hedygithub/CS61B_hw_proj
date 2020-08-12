@@ -7,6 +7,7 @@ import spark.Response;
 import bearmaps.proj2c.utils.Constants;
 
 import javax.imageio.ImageIO;
+import javax.swing.table.TableStringConverter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -17,8 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static bearmaps.proj2c.utils.Constants.SEMANTIC_STREET_GRAPH;
-import static bearmaps.proj2c.utils.Constants.ROUTE_LIST;
+import static bearmaps.proj2c.utils.Constants.*;
 
 /**
  * Handles requests from the web browser for map images. These images
@@ -84,13 +84,110 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     @Override
     public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
-        //System.out.println("yo, wanna know the parameters given by the web browser? They are:");
-        //System.out.println(requestParams);
+        System.out.println("yo, wanna know the parameters given by the web browser? They are:");
+        System.out.println(requestParams);
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
-                + "your browser.");
+
+
+        if (confusingInput(requestParams) || noCoverage(requestParams)) {
+            results.put("query_success", false);
+        } else {
+            int depth = properDepth(requestParams);
+            int raster_ul_xColumn = xColumn(depth, requestParams.get("ullon"));
+            int raster_ul_yColumn = yColumn(depth, requestParams.get("ullat"));
+            int raster_lr_xColumn = xColumn(depth, requestParams.get("lrlon"));
+            int raster_lr_yColumn = yColumn(depth, requestParams.get("lrlat"));
+
+            String[][] render_grid = new String[raster_lr_yColumn - raster_ul_yColumn + 1][raster_lr_xColumn - raster_ul_xColumn + 1];
+            for (int i = raster_ul_xColumn; i <= raster_lr_xColumn; i++) {
+                for (int j = raster_ul_yColumn; j <= raster_lr_yColumn; j++) {
+                    render_grid[j - raster_ul_yColumn][i - raster_ul_xColumn] = toTileString(depth, i, j);
+                }
+            }
+            results.put("render_grid", render_grid);
+            results.put("raster_ul_lon", xColumnToLon(depth, raster_ul_xColumn, 0));
+            results.put("raster_ul_lat", yColumnToLat(depth, raster_ul_yColumn, 0));
+            results.put("raster_lr_lon", xColumnToLon(depth, raster_lr_xColumn, 1));
+            results.put("raster_lr_lat", yColumnToLat(depth, raster_lr_yColumn, 1));
+            results.put("depth", depth);
+            results.put("query_success", true);
+        }
+
+//        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
+//                + "your browser.");
         return results;
+
     }
+
+    //not consider 179.9 ~ -179.9
+    private double getLonD(double ullon, double lrlon) {
+        return lrlon - ullon;
+    }
+    private double getLatD(double ullat, double lrlat) {
+        return ullat - lrlat;
+    }
+
+    private double getLonDPP(double ullon, double lrlon, double w) {
+        return (getLonD(ullon,lrlon) / w);
+    }
+
+    private int deepest = 7;
+    private int properDepth(Map<String, Double> requestParams) {
+        double rootLonDPP = getLonDPP(ROOT_ULLON, ROOT_LRLON, TILE_SIZE);
+        double requestLonDPP = getLonDPP(requestParams.get("ullon"), requestParams.get("lrlon"), requestParams.get("w"));
+        for (int depth = 0; depth <= deepest; depth++) {
+            if(rootLonDPP <= requestLonDPP) {
+                return depth;
+            }
+            rootLonDPP = rootLonDPP / 2;
+        }
+        return deepest;
+    }
+
+    private int xColumn(int depth, double lon) {
+        double lonPerTile = getLonD(ROOT_ULLON, ROOT_LRLON) / Math.pow(2, depth);
+        int xColumn = (int) Math.floor(getLonD(ROOT_ULLON, lon) / lonPerTile);
+        xColumn = Math.max(0, xColumn);
+        xColumn = Math.min((int)Math.pow(2, depth) - 1, xColumn);
+        return xColumn;
+    }
+    private int yColumn(int depth, double lat) {
+        double latPerTile = getLatD(ROOT_ULLAT, ROOT_LRLAT) / Math.pow(2, depth);
+        int yColumn = (int) Math.floor(getLatD(ROOT_ULLAT, lat) / latPerTile);
+        yColumn = Math.max(0, yColumn);
+        yColumn = Math.min((int)Math.pow(2, depth) - 1, yColumn);
+        return yColumn;
+    }
+
+    private double xColumnToLon(int depth, int xColumn, int isLr) {
+        double lonPerTile = getLonD(ROOT_ULLON, ROOT_LRLON) / Math.pow(2, depth);
+        return ROOT_ULLON + (xColumn + isLr) * lonPerTile;
+    }
+    private double yColumnToLat(int depth, int yColumn, int isLr) {
+        double latPerTile = getLatD(ROOT_ULLAT, ROOT_LRLAT) / Math.pow(2, depth);
+        return ROOT_ULLAT - (yColumn + isLr) * latPerTile;
+    }
+
+    private String toTileString(int depth, int xColumn, int yColumn) {
+        String tile;
+        tile = "d" + depth + "_x" + xColumn + "_y" + yColumn + ".png";
+        return tile;
+    }
+
+    private boolean noCoverage(Map<String, Double> requestParams) {
+        return (getLonD(requestParams.get("ullon"), ROOT_LRLON) < 0
+                || getLatD(requestParams.get("ullat"), ROOT_LRLAT) < 0
+                || getLonD(ROOT_ULLON, requestParams.get("lrlon")) < 0
+                || getLatD(ROOT_ULLAT, requestParams.get("lrlat")) < 0);
+    }
+
+    private boolean confusingInput(Map<String, Double> requestParams) {
+        return (getLonD(requestParams.get("ullon"), requestParams.get("lrlon")) < 0
+                || getLatD(requestParams.get("ullat"), requestParams.get("lrlat")) < 0);
+    }
+
+
+
 
     @Override
     protected Object buildJsonResponse(Map<String, Object> result) {

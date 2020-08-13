@@ -1,7 +1,10 @@
 package bearmaps.proj2c;
 
 import bearmaps.hw4.AStarSolver;
+import bearmaps.hw4.WeightedEdge;
 
+import javax.swing.text.EditorKit;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -40,8 +43,48 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(AugmentedStreetMapGraph g, List<Long> route) {
+        List<NavigationDirection> directions = new LinkedList<>();
+        WeightedEdge fromEdge = g.edge(route.get(0), route.get(1));
+        WeightedEdge toEdge = g.edge(route.get(0), route.get(1));
+        NavigationDirection currDir = new NavigationDirection();
+
+        //start and second vertex
+        currDir.direction = 0;
+        if (fromEdge.getName() != null) {
+            currDir.way = fromEdge.getName();
+        }
+        currDir.distance = fromEdge.weight();
+
+        //other vertex
+        for (int i = 2; i < route.size(); i++) {
+            toEdge = g.edge((long)toEdge.to(), route.get(i));
+            int direction = getDirectionFromEdges(g, fromEdge, toEdge);
+
+            if (toEdge.getName().equals(currDir.way)) {
+                currDir.distance += toEdge.weight();
+            } else {
+                directions.add(currDir);
+                currDir = new NavigationDirection();
+                currDir.direction = direction;
+                if (toEdge.getName() != null) {
+                    currDir.way = toEdge.getName();
+                }
+                currDir.distance = toEdge.weight();
+            }
+            fromEdge = toEdge;
+        }
         /* fill in for part IV */
-        return null;
+        directions.add(currDir);
+        return directions;
+    }
+    private static int getDirectionFromEdges(AugmentedStreetMapGraph g, WeightedEdge fromEdge, WeightedEdge toEdge) {
+        Long fromEdgeFrom = (long) fromEdge.from();
+        Long fromEdgeTo = (long) fromEdge.to();
+        Long toEdgeFrom = (long) toEdge.from();
+        Long toEdgeTo = (long) toEdge.to();
+        double prevBearing = NavigationDirection.bearing(g.lon(fromEdgeFrom), g.lon(fromEdgeTo), g.lat(fromEdgeFrom), g.lat(fromEdgeTo));
+        double currBearing = NavigationDirection.bearing(g.lon(toEdgeFrom), g.lon(toEdgeTo), g.lat(toEdgeFrom), g.lat(toEdgeTo));
+        return NavigationDirection.getDirection(prevBearing, currBearing);
     }
 
     /**

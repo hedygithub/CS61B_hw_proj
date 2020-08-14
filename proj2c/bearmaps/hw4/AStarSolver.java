@@ -30,8 +30,12 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
         ArrayHeapMinPQ<Vertex> minPQ = new ArrayHeapMinPQ<>();
         minPQ.add(start, distTo.get(start) + input.estimatedDistanceToGoal(start,end));
 
-        Stopwatch sw = new Stopwatch();
-        timeSpent = sw.elapsedTime();
+//        Stopwatch sw = new Stopwatch();
+//        timeSpent = sw.elapsedTime();
+        long startTime = System.currentTimeMillis();
+        long currTime = System.currentTimeMillis();
+        timeSpent = (double) (currTime - startTime)/1000.0;
+
         while (minPQ.size() != 0 && !minPQ.getSmallest().equals(end) && timeSpent < timeout) {
             Vertex p = minPQ.removeSmallest();
             numStatesExplored ++;
@@ -52,7 +56,9 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
                     }
                 }
             }
-            timeSpent = sw.elapsedTime();
+//            timeSpent = sw.elapsedTime();
+            currTime = System.currentTimeMillis();
+            timeSpent = (double) (currTime - startTime)/1000.0;
         }
         if (minPQ.size() == 0) {
             outcome = SolverOutcome.UNSOLVABLE;

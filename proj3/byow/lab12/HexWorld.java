@@ -63,12 +63,12 @@ public class HexWorld {
 
     private void addLine(int x, int y, int hexSideOrder, int nextX, int nextY) {
         if (hexSideOrder == 1) {
-            addHexagon hexagon = new addHexagon(world, true);
-            world = hexagon.addHexagon(x, y, hexSideLength);
+            addHexagon hexagon = new addHexagon(true);
+            world = hexagon.addHexagon(world, x, y, hexSideLength);
         } else {
             for (int c = 0; c < hexSideOrder - 1 ; c++) {
-                addHexagon hexagon = new addHexagon(world, true);
-                world = hexagon.addHexagon(x + nextX * c, y + nextY * c, hexSideLength);
+                addHexagon hexagon = new addHexagon(true);
+                world = hexagon.addHexagon(world, x + nextX * c, y + nextY * c, hexSideLength);
             }
         }
     }

@@ -7,7 +7,6 @@ import byow.TileEngine.Tileset;
 import java.util.Random;
 
 public class addHexagon {
-    private TETile[][] world;
     private TETile basicTile;
     private Boolean randomColor;
 
@@ -21,8 +20,7 @@ public class addHexagon {
     /**
      * add Hexagon with a specific tile.
      */
-    public addHexagon(TETile[][] world, TETile tile, Boolean randomColor) {
-        this.world = world;
+    public addHexagon(TETile tile, Boolean randomColor) {
         this.basicTile = tile;
         this.randomColor = randomColor;
     }
@@ -30,8 +28,7 @@ public class addHexagon {
     /**
      * add Hexagon with RANDOM tiles.
      */
-    public addHexagon(TETile[][] world, Boolean randomColor) {
-        this.world = world;
+    public addHexagon(Boolean randomColor) {
         this.basicTile = randomTile();
         this.randomColor = randomColor;
     }
@@ -39,10 +36,10 @@ public class addHexagon {
     /**
      * add Hexagon.
      */
-    public TETile[][] addHexagon(int xLB, int yLB, int sideLength) {
-        addQuadrangle(xLB,yLB, sideLength, 1);
-        addQuadrangle(xLB,yLB + sideLength * 2 - 1, sideLength, -1);
-        return this.world;
+    public TETile[][] addHexagon(TETile[][] world, int xLB, int yLB, int sideLength) {
+        world = addQuadrangle(world, xLB,yLB, sideLength, 1);
+        world = addQuadrangle(world, xLB,yLB + sideLength * 2 - 1, sideLength, -1);
+        return world;
     }
 
     /**
@@ -52,16 +49,17 @@ public class addHexagon {
      * @param sideLength: short side length
      * @param direction: -1 from up to bottom; 1 from bottom to up.
      */
-    private void addQuadrangle(int xSL, int ySL, int sideLength, int direction) {
+    private TETile[][] addQuadrangle(TETile[][] world, int xSL, int ySL, int sideLength, int direction) {
         for(int j = 0; j < sideLength; j ++) {
-            addLine(xSL - j, ySL + j * direction, sideLength + j * 2);
+            world = addLine(world, xSL - j, ySL + j * direction, sideLength + j * 2);
         }
+        return world;
     }
 
     /**
      * add Line.
      */
-    private void addLine(int xL, int y, int lineLength) {
+    private TETile[][] addLine(TETile[][] world, int xL, int y, int lineLength) {
         for(int i = xL; i < xL + lineLength; i++) {
             if (randomColor) {
                 world[i][y] = TETile.colorVariant(basicTile, DR, DG, DB, RANDOM);
@@ -69,6 +67,7 @@ public class addHexagon {
                 world[i][y] = basicTile;
             }
         }
+        return world;
     }
 
     /**
@@ -101,8 +100,8 @@ public class addHexagon {
             }
         }
 
-        addHexagon hexagon = new addHexagon(world, true);
-        world = hexagon.addHexagon(20,0,5);
+        addHexagon hexagon = new addHexagon(true);
+        world = hexagon.addHexagon(world, 20,0,5);
 
         ter.renderFrame(world);
     }

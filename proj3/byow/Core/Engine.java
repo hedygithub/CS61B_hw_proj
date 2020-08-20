@@ -52,7 +52,7 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
-        long Seed = 189340;
+        long Seed = 243056634;
         WorldGenerator wg = new WorldGenerator(Seed);
         wg.generate();
         TETile[][] finalWorldFrame = wg.World();

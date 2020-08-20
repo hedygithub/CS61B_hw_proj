@@ -6,9 +6,9 @@ package byow.Core;
 public class Constants {
     // TODO: comments
 
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
-    public static final int OVERLAP_LIMIT = 10;
+    public static final int WIDTH = 90;
+    public static final int HEIGHT = 48;
+    public static final int OVERLAP_LIMIT = 20;
     public static final int ROOM_WIDTH_LIMIT = 7;
-    public static final int ROOM_HEIGHT_LIMIT = 5;
+    public static final int ROOM_HEIGHT_LIMIT = 4;
 }

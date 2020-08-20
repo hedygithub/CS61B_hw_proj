@@ -97,11 +97,11 @@ public class WorldGenerator {
      */
     // make a Room randomly
     private Room designRoom() {
-        int xLB = rng.nextInt(WIDTH - 3) + 1;
-        int yLB = rng.nextInt(HEIGHT - 3) + 1;
-        int xRT = rng.nextInt(Math.min(WIDTH - xLB - 2, ROOM_WIDTH_LIMIT)) + xLB + 1;
-        int yRT = rng.nextInt(Math.min(HEIGHT - yLB  - 2, ROOM_HEIGHT_LIMIT)) + yLB  + 1;
-        return new Room(xLB, yLB, xRT, yRT);
+        int xLB = rng.nextInt((WIDTH - 1) - (1 + 1)) + 1; //-1,-(1 + 1), +1: will add 1, floor + wall in Right, wall int the Left
+        int yLB = rng.nextInt((HEIGHT - 1) - (1 + 1)) + 1;
+        int xRT = rng.nextInt(Math.min((WIDTH - xLB - 1) - 1, ROOM_WIDTH_LIMIT)) + xLB + 1; //-1, -1, +1: will add 1, wall int the Right`, at least 1 larger than xLB
+        int yRT = rng.nextInt(Math.min((HEIGHT - yLB  - 1) - 1, ROOM_HEIGHT_LIMIT)) + yLB  + 1;
+        return new Room(new Point(xLB, yLB), new Point(xRT, yRT));
     }
 
     // make a Hallway based on the given Room and a destination Point
@@ -109,7 +109,7 @@ public class WorldGenerator {
         Point<Integer> pivot = r.findNearestPoint(destination);
         System.out.println("new pivot:" + pivot.toString() +"; destination:" + destination.toString());
         // form a hallway with these 2 pivots (should decide which is LB which is RT)
-        return new Hallway(pivot, destination,rng.nextInt(1) == 0);
+        return new Hallway(pivot, destination,rng.nextInt(2) == 0);
     }
 
     // TODO: find a better way to do it, better if without changing the overall structure

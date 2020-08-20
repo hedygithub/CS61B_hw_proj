@@ -15,11 +15,6 @@ public class Room implements Component {
         pRT = rt;
     }
 
-    public Room(int xlb, int ylb, int xrt, int yrt) {
-        pLB = new Point(xlb, ylb);
-        pRT = new Point(xrt, yrt);
-    }
-
     @Override
     public Point pivot() {
         return pLB; // we pick left bottom point
@@ -36,12 +31,8 @@ public class Room implements Component {
     //@Override
     private void addFloors(Set<Point<Integer>> floorSet) {
         Point point;
-        int xLB = pLB.x();
-        int xRT = pRT.x();
-        int yLB = pLB.y();
-        int yRT = pRT.y();
-        for (int i = xLB; i <= xRT; i += 1) {
-            for (int j = yLB; j <= yRT; j += 1) {
+        for (int i = pLB.x(); i <= pRT.x(); i += 1) {
+            for (int j = pLB.y(); j <= pRT.y(); j += 1) {
                 point = new Point(i, j);
                 floorSet.add(point);
             }
@@ -51,32 +42,24 @@ public class Room implements Component {
     //@Override
     private void addWalls(Set<Point<Integer>> wallSet) {
         Point<Integer> point;
-        int xLB = pLB.x()-1;
-        int xRT = pRT.x()+1;
-        int yLB = pLB.y()-1;
-        int yRT = pRT.y()+1;
-        for (int i = xLB; i <= xRT; i++) {
-            point = new Point(i, yLB);
+        for (int i = pLB.x()-1; i <= pRT.x()+1; i++) {
+            point = new Point(i, pLB.y()-1);
             wallSet.add(point);
-            point = new Point(i, yRT);
+            point = new Point(i, pRT.y()+1);
             wallSet.add(point);
         }
-        for (int j = yLB; j <= yRT; j++) {
-            point = new Point(xLB, j);
+        for (int j = pLB.y()-1; j <= pRT.y()+1; j++) {
+            point = new Point(pLB.x()-1, j);
             wallSet.add(point);
-            point = new Point(xRT, j);
+            point = new Point(pRT.x()+1, j);
             wallSet.add(point);
         }
     }
 
     // check if there is enough space for this component to be placed
     public boolean checkSpace(Set<Point<Integer>> floorSet, Set<Point<Integer>> wallSet) {
-        int xLB = pLB.x();
-        int xRT = pRT.x();
-        int yLB = pLB.y();
-        int yRT = pRT.y();
-        for (int i = xLB; i <= xRT; i += 1) {
-            for (int j = yLB; j <= yRT; j += 1) {
+        for (int i = pLB.x(); i <= pRT.x(); i += 1) {
+            for (int j = pLB.y(); j <= pRT.y(); j += 1) {
                 Point point = new Point(i, j);
                 if (floorSet.contains(point) || wallSet.contains(point)) {
                     return false;
@@ -88,19 +71,17 @@ public class Room implements Component {
 
     // find the nearest point on the wall of the room given a point (assume it's outside the room)
     public Point<Integer> findNearestPoint(Point<Integer> point) {
+        boolean pXIncluded = point.x() >= pLB.x() && point.x() <= pRT.x();
+        boolean pYIncluded = point.y() >= pLB.y() && point.y() <= pRT.y();
 
-        // note there are small adjustments because we need to move to the wall
-        int xLB = pLB.x();
-        int xRT = pRT.x();
-        int yLB = pLB.y();
-        int yRT = pRT.y();
-        int x = point.x();
-        int y = point.y();
-        boolean xLBCloser = (Math.abs(x - xLB) <= Math.abs(x - xRT));
-        boolean yLBCloser = (Math.abs(y - yLB) <= Math.abs(y - yRT));
+        boolean xLBCloser = (Math.abs(point.x() - pLB.x()) <= Math.abs(point.x() - pRT.x()));
+        boolean yLBCloser = (Math.abs(point.y() - pLB.y()) <= Math.abs(point.y() - pRT.y()));
 
-        int xRes = xLBCloser ? xLB : xRT;
-        int yRes = yLBCloser? yLB : yRT;
+        int xRes = xLBCloser? pLB.x() : pRT.x();
+        int yRes = yLBCloser? pLB.y() : pRT.y();
+
+        xRes = pXIncluded? point.x() : xRes;
+        yRes = pYIncluded? point.y() : yRes;
 
         return new Point(xRes, yRes);
     }

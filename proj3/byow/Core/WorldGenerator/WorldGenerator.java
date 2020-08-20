@@ -2,7 +2,6 @@ package byow.Core.WorldGenerator;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.algs4.Point2D;
 
 import java.util.*;
 
@@ -12,13 +11,14 @@ import static byow.Core.Constants.*;
  * A world generator
  */
 public class WorldGenerator {
-    private Random rng;
+    private static Random rng;
     private int width;
     private int height;
+
     private boolean finished;
     private TETile[][] world;
-    private Set<Point2D> floorSet;
-    private Set<Point2D> wallSet;
+    private Set<Point<Integer>> floorSet;
+    private Set<Point<Integer>> wallSet;
 
     /**
      * Constructors
@@ -67,7 +67,7 @@ public class WorldGenerator {
         // build the first room
         Room room = designRoom();
         room.generate(floorSet, wallSet);
-        Point2D pivot = room.pivot();
+        Point<Integer> pivot = room.pivot();
 
         // iteration to build rooms and hallways
         int overlap = 0;
@@ -83,7 +83,6 @@ public class WorldGenerator {
             else {
                 overlap += 1;
             }
-
         }
 
         // IMPORTANT: always fill in walls before floors!
@@ -105,20 +104,20 @@ public class WorldGenerator {
         return new Room(xLB, yLB, xRT, yRT);
     }
 
-    // make a Hallway based on the given Room and a destination Point2D
-    private Hallway designHallway(Room r, Point2D destination) {
-        Point2D pivot = r.findNearestPoint(destination);
+    // make a Hallway based on the given Room and a destination Point
+    private Hallway designHallway(Room r, Point<Integer> destination) {
+        Point<Integer> pivot = r.findNearestPoint(destination);
         System.out.println("new pivot:" + pivot.toString() +"; destination:" + destination.toString());
         // form a hallway with these 2 pivots (should decide which is LB which is RT)
-        return new Hallway(pivot, destination);
+        return new Hallway(pivot, destination,rng.nextInt(1) == 0);
     }
 
     // TODO: find a better way to do it, better if without changing the overall structure
-    private Point2D findRandomFloor() {
+    private Point<Integer> findRandomFloor() {
         // this is very slow
         int index = rng.nextInt(floorSet.size());
         int count = 0;
-        for (Point2D p: floorSet) {
+        for (Point<Integer> p: floorSet) {
             if (count == index) {
                 return p;
             }
@@ -128,9 +127,9 @@ public class WorldGenerator {
     }
 
     // fill in the tileset
-    private void fill(Set<Point2D> set, TETile type) {
-        for (Point2D p: set) {
-            world[(int)p.x()][(int)p.y()] = type;
+    private void fill(Set<Point<Integer>> set, TETile type) {
+        for (Point<Integer> p: set) {
+            world[p.x()][p.y()] = type;
         }
     }
 

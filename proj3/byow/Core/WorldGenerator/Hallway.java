@@ -1,76 +1,117 @@
 package byow.Core.WorldGenerator;
 
-import edu.princeton.cs.algs4.Point2D;
-
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * A hallway in the world
  */
-public class Hallway implements Component {
+public class Hallway implements Component{
 
     // 2 points of the hallway (not on the wall). Unclear relative positions.
-    private Point2D pB;
-    private Point2D pT;
+    // pB -> Begin Point, pT -> Target Point
+    private Point<Integer> pB;
+    private Point<Integer> pT;
+    private boolean xFirst;
 
-    public Hallway(Point2D b, Point2D t) {
+    public Hallway(Point<Integer> b, Point<Integer> t, boolean xFirst) {
         pB = b;
         pT = t;
+        this.xFirst = xFirst;
     }
 
-    public Hallway(int xb, int yb, int xt, int yt) {
-        pB = new Point2D(xb, yb);
-        pT = new Point2D(xt, yt);
+    public Hallway(int xb, int yb, int xt, int yt, boolean xFirst) {
+        pB = new Point(xb, yb);
+        pT = new Point(xt, yt);
+        this.xFirst = xFirst;
     }
 
     @Override
-    public Point2D pivot() {
+    public Point<Integer> pivot() {
         return pB; // we pick bottom point
     }
 
-    // from pB to pT: first go horizontally, then go vertically
     @Override
-    public void generate(Set<Point2D> floorSet, Set<Point2D> wallSet) {
-        Point2D point;
+    // from pB to pT: first go horizontally, then go vertically
+    public void generate(Set<Point<Integer>> floorSet, Set<Point<Integer>> wallSet) {
+        Point<Integer> point;
 
-        int xB = (int)pB.x();
-        int xT = (int)pT.x();
-        int yB = (int)pB.y();
-        int yT = (int)pT.y();
+        int xB = pB.x();
+        int xT = pT.x();
+        int yB = pB.y();
+        int yT = pT.y();
 
         int xDirection = (int)Math.signum(xT-xB);
         int yDirection = (int)Math.signum(yT-yB);
 
-        // starting at pB, go left or right
-        for (int i = xB; i != xT; i += xDirection) {
-            point = new Point2D(i, yB);
-            if (floorSet.contains(point)) {
-                return;
-            }
-            floorSet.add(point);
-            wallSet.add(new Point2D(i, yB - 1));
-            wallSet.add(new Point2D(i, yB + 1));
+        // in these 2 case it's the closest perpendicular point on the edge
+        if (xDirection == 0 || !xFirst) {
+            yB += yDirection;
+            yDirection = (int)Math.signum(yT-yB);
+        }
+        else if (yDirection == 0 || xFirst) {
+            xB += xDirection;
+            xDirection = (int)Math.signum(xT-xB);
         }
 
-        // walls at the corner (xT, yB)
-        wallSet.add(new Point2D(xT, yB - yDirection));
-        wallSet.add(new Point2D(xT + 1, yB - yDirection));
-        wallSet.add(new Point2D(xT - 1, yB - yDirection));
-
-        // go bottom or top, ending at pRT
-        for (int j = yB; j != yT; j += yDirection) {
-            point = new Point2D(xT, j);
-            if (floorSet.contains(point)) {
-                return;
+        if (xFirst) {
+            // starting at pB(xB, yB), go left or right, may ending at (xT, yB)
+            for (int i = xB; i != xT; i += xDirection) {
+                point = new Point(i, yB);
+                if (floorSet.contains(point)) {
+                    return;
+                }
+                floorSet.add(point);
+                wallSet.add(new Point(i, yB - 1));
+                wallSet.add(new Point(i, yB + 1));
             }
-            floorSet.add(point);
-            point = new Point2D(xT - 1, j);
-            wallSet.add(point);
-            point = new Point2D(xT + 1, j);
-            wallSet.add(point);
-        }
 
-        return;
+            // walls at the corner (xT, yB)
+            wallSet.add(new Point(xT, yB - yDirection));
+            wallSet.add(new Point(xT + 1, yB - yDirection));
+            wallSet.add(new Point(xT - 1, yB - yDirection));
+
+            // starting at (xT, yB), go bottom or top, may ending at pT(xT, yT)
+            for (int j = yB; j != yT; j += yDirection) {
+                point = new Point(xT, j);
+                if (floorSet.contains(point)) {
+                    return;
+                }
+                floorSet.add(point);
+                point = new Point(xT - 1, j);
+                wallSet.add(point);
+                point = new Point(xT + 1, j);
+                wallSet.add(point);
+            }
+        } else {
+            // starting at pB(xB, yB), go bottom or top, may ending at (xB, yT)
+            for (int j = yB; j != yT; j += yDirection) {
+                point = new Point(xB, j);
+                if (floorSet.contains(point)) {
+                    return;
+                }
+                floorSet.add(point);
+                point = new Point(xB - 1, j);
+                wallSet.add(point);
+                point = new Point(xB + 1, j);
+                wallSet.add(point);
+            }
+
+            // walls at the corner (xB, yT)
+            wallSet.add(new Point(xB - xDirection, yT));
+            wallSet.add(new Point(xB - xDirection, yT + 1));
+            wallSet.add(new Point(xB - xDirection, yT - 1));
+
+
+            // starting at (xB, yT), go left or right, may ending at pT(xT, yT)
+            for (int i = xB; i != xT; i += xDirection) {
+                point = new Point(i, yT);
+                if (floorSet.contains(point)) {
+                    return;
+                }
+                floorSet.add(point);
+                wallSet.add(new Point(i, yT - 1));
+                wallSet.add(new Point(i, yT + 1));
+            }
+        }
     }
 }

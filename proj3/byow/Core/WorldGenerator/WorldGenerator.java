@@ -18,7 +18,9 @@ public class WorldGenerator {
     private boolean finished;
     private TETile[][] world;
     private Set<Point> floorSet;
+    private List<Point> floorList;
     private Set<Point> wallSet;
+    private Point door;
 
     /**
      * Constructors
@@ -47,6 +49,7 @@ public class WorldGenerator {
         }
         finished = false;
         floorSet = new HashSet<>();
+        floorList = new ArrayList<>();
         wallSet = new HashSet<>();
 
     }
@@ -63,11 +66,10 @@ public class WorldGenerator {
     }
 
     public void generate() {
-
         // build the first room
         Room room = designRoom();
-        room.generate(floorSet, wallSet);
-        Point pivot = room.pivot();
+        room.generate(floorSet, floorList, wallSet,world);
+        Point targetPoint = findRandomFloor();
 
         // iteration to build rooms and hallways
         int overlap = 0;
@@ -75,19 +77,27 @@ public class WorldGenerator {
         while (overlap < OVERLAP_LIMIT) {
             room = designRoom();
             if (room.checkSpace(floorSet, wallSet)) {
-                room.generate(floorSet, wallSet);
-                hallway = designHallway(room, pivot);
-                hallway.generate(floorSet, wallSet);
-                pivot = findRandomFloor();
+                room.generate(floorSet, floorList, wallSet, world);
+                hallway = designHallway(room, targetPoint);
+                hallway.generate(floorSet, floorList, wallSet, world);
+                targetPoint = findRandomFloor();
             }
             else {
                 overlap += 1;
             }
         }
 
+        // Clean wall Set
+
         // IMPORTANT: always fill in walls before floors!
-        fill(wallSet, Tileset.WALL);
+        floorSet = rebuildFloorPoint();
+        wallSet = rebuildWallPoint();
+
         fill(floorSet, Tileset.FLOOR);
+        fill(wallSet, Tileset.WALL);
+
+        Point door = Door.generate(wallSet, world, rng);
+
 
         finished = true;
     }
@@ -105,26 +115,38 @@ public class WorldGenerator {
     }
 
     // make a Hallway based on the given Room and a destination Point
-    private Hallway designHallway(Room r, Point destination) {
-        Point pivot = r.findNearestPoint(destination);
-        // System.out.println("new pivot:" + pivot.toString() +"; destination:" + destination.toString());
-        // form a hallway with these 2 pivots (should decide which is LB which is RT)
-        return new Hallway(pivot, destination,rng.nextInt(2) == 0);
+    private Hallway designHallway(Room r, Point targetPoint) {
+        Point startPoint = r.findNearestPoint(targetPoint);
+        return new Hallway(startPoint, targetPoint,rng.nextInt(2) == 0);
     }
 
-    // TODO: find a better way to do it, better if without changing the overall structure
     private Point findRandomFloor() {
-        // this is very slow
-        int index = rng.nextInt(floorSet.size());
-        int count = 0;
-        for (Point p: floorSet) {
-            if (count == index) {
-                return p;
-            }
-            count += 1;
-        }
-        return null;
+        // use floorList to accelerate it
+        int index = rng.nextInt(floorList.size());
+        return floorList.get(index);
     }
+
+    private Set<Point> rebuildWallPoint() {
+        Set<Point> newWallSet = new HashSet<>();
+        for (Point wallPoint : wallSet) {
+            if (!floorSet.contains(wallPoint)) {
+                wallPoint.changeTile(Tileset.WALL);
+                newWallSet.add(wallPoint);
+            }
+        }
+        return newWallSet;
+    }
+
+    private Set<Point> rebuildFloorPoint() {
+        Set<Point> newFloorSet = new HashSet<>();
+        for (Point floorPoint : floorSet) {
+            floorPoint.changeTile(Tileset.FLOOR);
+            newFloorSet.add(floorPoint);
+        }
+        return newFloorSet;
+    }
+
+
 
     // fill in the tileset
     private void fill(Set<Point> set, TETile type) {

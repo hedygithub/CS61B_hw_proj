@@ -51,15 +51,50 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+        if (input == null) {
+            throw new IllegalArgumentException();
+        } else {
 
-        long Seed = 243056634;
-        WorldGenerator wg = new WorldGenerator(Seed);
-        wg.generate();
-        TETile[][] finalWorldFrame = wg.World();
+            char firstChar = input.charAt(0);
+            if (firstChar == 'L' || firstChar == 'l') {
+                input = SAVED_INPUT + input.substring(1, input.length());
+            }
 
-        ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(finalWorldFrame);
-        return finalWorldFrame;
+            String seed = "";
+            int actionCharPos = input.length();
+
+            if (firstChar == 'N' || firstChar == 'n') {
+                for (int i = 1; i < input.length(); i++) {
+                    char c = input.charAt(i);
+                    if (c >= '0' && c <= '9') {
+                        seed += c;
+                    } else {
+                        actionCharPos = i;
+                        break;
+                    }
+                }
+            }
+
+            System.out.println(seed);
+
+            long Seed = Integer.parseInt(seed);
+            WorldGenerator wg = new WorldGenerator(Seed);
+            wg.generate();
+            TETile[][] finalWorldFrame = wg.World();
+
+            ter.initialize(WIDTH, HEIGHT);
+            ter.renderFrame(finalWorldFrame);
+
+            for (int i = actionCharPos; i < input.length() - 1; i++) {
+                char c = input.charAt(i);
+                char n = input.charAt(i + 1);
+                if (c + n == ':' + 'q' || c + n == ':' + 'Q') {
+                    Constants.Save(input.substring(0, i));
+                }
+            }
+
+            return finalWorldFrame;
+        }
     }
 
 }

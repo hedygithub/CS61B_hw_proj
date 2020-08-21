@@ -1,5 +1,7 @@
 package byow.Core.WorldGenerator;
 
+import byow.Core.Constants.*;
+
 import java.util.Set;
 
 /**
@@ -7,8 +9,8 @@ import java.util.Set;
  */
 public class Room implements Component {
 
-    private Point<Integer> pLB; // left bottom point of the room, not its wall
-    private Point<Integer> pRT; // right top point of the room, not its wall
+    private Point pLB; // left bottom point of the room, not its wall
+    private Point pRT; // right top point of the room, not its wall
 
     public Room(Point lb, Point rt) {
         pLB = lb;
@@ -22,42 +24,39 @@ public class Room implements Component {
 
     // from pLB to pRT
     @Override
-    public void generate(Set<Point<Integer>> floorSet, Set<Point<Integer>> wallSet) {
+    public void generate(Set<Point> floorSet, Set<Point> wallSet) {
         addFloors(floorSet);
         addWalls(wallSet);
     }
 
     // a bit cumbersome
     //@Override
-    private void addFloors(Set<Point<Integer>> floorSet) {
-        Point point;
+    private void addFloors(Set<Point> floorSet) {
+
         for (int i = pLB.x(); i <= pRT.x(); i += 1) {
             for (int j = pLB.y(); j <= pRT.y(); j += 1) {
-                point = new Point(i, j);
-                floorSet.add(point);
+                floorSet.add(new Point(i, j));
             }
         }
     }
 
     //@Override
-    private void addWalls(Set<Point<Integer>> wallSet) {
-        Point<Integer> point;
+    private void addWalls(Set<Point> wallSet) {
+
         for (int i = pLB.x()-1; i <= pRT.x()+1; i++) {
-            point = new Point(i, pLB.y()-1);
-            wallSet.add(point);
-            point = new Point(i, pRT.y()+1);
-            wallSet.add(point);
+            wallSet.add(new Point(i, pLB.y()-1));
+            wallSet.add(new Point(i, pRT.y()+1));
         }
+
         for (int j = pLB.y()-1; j <= pRT.y()+1; j++) {
-            point = new Point(pLB.x()-1, j);
-            wallSet.add(point);
-            point = new Point(pRT.x()+1, j);
-            wallSet.add(point);
+            wallSet.add(new Point(pLB.x()-1, j));
+            wallSet.add(new Point(pRT.x()+1, j));
         }
     }
 
     // check if there is enough space for this component to be placed
-    public boolean checkSpace(Set<Point<Integer>> floorSet, Set<Point<Integer>> wallSet) {
+    public boolean checkSpace(Set<Point> floorSet, Set<Point> wallSet) {
+
         for (int i = pLB.x(); i <= pRT.x(); i += 1) {
             for (int j = pLB.y(); j <= pRT.y(); j += 1) {
                 Point point = new Point(i, j);
@@ -70,12 +69,14 @@ public class Room implements Component {
     }
 
     // find the nearest point on the wall of the room given a point (assume it's outside the room)
-    public Point<Integer> findNearestPoint(Point<Integer> point) {
-        boolean pXIncluded = point.x() >= pLB.x() && point.x() <= pRT.x();
-        boolean pYIncluded = point.y() >= pLB.y() && point.y() <= pRT.y();
+    public Point findNearestPoint(Point point) {
+        //boolean pXIncluded = point.x() >= pLB.x() && point.x() <= pRT.x();
+        boolean pXIncluded = (point.compareX(pLB) != X_DIRECTION.LEFT) && (point.compareX(pRT) != X_DIRECTION.RIGHT);
+        //boolean pYIncluded = point.y() >= pLB.y() && point.y() <= pRT.y();
+        boolean pYIncluded = (point.compareY(pLB) != Y_DIRECTION.BOTTOM) && (point.compareY(pRT) != Y_DIRECTION.TOP);
 
-        boolean xLBCloser = (Math.abs(point.x() - pLB.x()) <= Math.abs(point.x() - pRT.x()));
-        boolean yLBCloser = (Math.abs(point.y() - pLB.y()) <= Math.abs(point.y() - pRT.y()));
+        boolean xLBCloser = Math.abs(point.distX(pLB)) <= Math.abs(point.distX(pRT));
+        boolean yLBCloser = Math.abs(point.distY(pLB)) <= Math.abs(point.distY(pRT));
 
         int xRes = xLBCloser? pLB.x() : pRT.x();
         int yRes = yLBCloser? pLB.y() : pRT.y();

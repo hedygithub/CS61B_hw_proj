@@ -17,8 +17,8 @@ public class WorldGenerator {
 
     private boolean finished;
     private TETile[][] world;
-    private Set<Point<Integer>> floorSet;
-    private Set<Point<Integer>> wallSet;
+    private Set<Point> floorSet;
+    private Set<Point> wallSet;
 
     /**
      * Constructors
@@ -67,7 +67,7 @@ public class WorldGenerator {
         // build the first room
         Room room = designRoom();
         room.generate(floorSet, wallSet);
-        Point<Integer> pivot = room.pivot();
+        Point pivot = room.pivot();
 
         // iteration to build rooms and hallways
         int overlap = 0;
@@ -105,19 +105,19 @@ public class WorldGenerator {
     }
 
     // make a Hallway based on the given Room and a destination Point
-    private Hallway designHallway(Room r, Point<Integer> destination) {
-        Point<Integer> pivot = r.findNearestPoint(destination);
-        System.out.println("new pivot:" + pivot.toString() +"; destination:" + destination.toString());
+    private Hallway designHallway(Room r, Point destination) {
+        Point pivot = r.findNearestPoint(destination);
+        // System.out.println("new pivot:" + pivot.toString() +"; destination:" + destination.toString());
         // form a hallway with these 2 pivots (should decide which is LB which is RT)
         return new Hallway(pivot, destination,rng.nextInt(2) == 0);
     }
 
     // TODO: find a better way to do it, better if without changing the overall structure
-    private Point<Integer> findRandomFloor() {
+    private Point findRandomFloor() {
         // this is very slow
         int index = rng.nextInt(floorSet.size());
         int count = 0;
-        for (Point<Integer> p: floorSet) {
+        for (Point p: floorSet) {
             if (count == index) {
                 return p;
             }
@@ -127,8 +127,8 @@ public class WorldGenerator {
     }
 
     // fill in the tileset
-    private void fill(Set<Point<Integer>> set, TETile type) {
-        for (Point<Integer> p: set) {
+    private void fill(Set<Point> set, TETile type) {
+        for (Point p: set) {
             world[p.x()][p.y()] = type;
         }
     }

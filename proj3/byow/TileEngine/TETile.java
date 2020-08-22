@@ -145,7 +145,7 @@ public class TETile {
 
     /**
      * Converts the given 2D array to a String. Handy for debugging.
-     * Note that since y = 0 is actually the bottom of your world when
+     * Note that since y = 0 is actually the DOWN of your world when
      * drawn using the tile rendering engine, this print method has to
      * print in what might seem like backwards order (so that the 0th
      * row gets printed last).

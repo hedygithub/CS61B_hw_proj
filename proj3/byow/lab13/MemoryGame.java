@@ -31,7 +31,7 @@ public class MemoryGame {
 
     public MemoryGame(int width, int height, int seed) {
         /* Sets up StdDraw so that it has a width by height grid of 16 by 16 squares as its canvas
-         * Also sets up the scale so the top left is (0,0) and the bottom right is (width, height)
+         * Also sets up the scale so the top left is (0,0) and the DOWN right is (width, height)
          */
         this.width = width;
         this.height = height;

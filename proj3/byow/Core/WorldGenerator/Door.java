@@ -13,7 +13,7 @@ public class Door {
     public static Point generate(Set<Point> wallSet, TETile[][] world, Random rng) {
         List<Point> qualifiedWallList = new ArrayList<>();
         for (Point wallPoint : wallSet) {
-            Set<TETile> neighborsTiles = wallPoint.neighborsTiles(world);
+            Set<TETile> neighborsTiles = wallPoint.allNbhTiles(world);
             boolean isQualifiedWall = neighborsTiles.contains(Tileset.FLOOR) && neighborsTiles.contains(Tileset.NOTHING);
             if (isQualifiedWall) {
                 qualifiedWallList.add(wallPoint);
@@ -22,8 +22,6 @@ public class Door {
         int index = rng.nextInt(qualifiedWallList.size());
         Point doorPoint = qualifiedWallList.get(index);
         wallSet.remove(doorPoint);
-        world[doorPoint.x()][doorPoint.y()] = Tileset.LOCKED_DOOR;
-        doorPoint.changeTile(Tileset.LOCKED_DOOR);
         return doorPoint;
     }
 

@@ -16,21 +16,10 @@ import static byow.Core.Constants.WIDTH;
 public class Point {
     private int x;
     private int y;
-    private TETile tile = Tileset.NOTHING;
 
     public Point(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public Point(int x, int y, TETile tile) {
-        this.x = x;
-        this.y = y;
-        this.tile = tile;
-    }
-
-    public void changeTile (TETile newTile) {
-        this.tile = newTile;
     }
 
     public int x() {
@@ -41,56 +30,36 @@ public class Point {
         return y;
     }
 
-    public TETile tile() {
-        return tile;
+    public TETile tile(TETile[][] world) {
+        return world[x][y];
     }
 
 
-    public Point up(TETile[][] world) {
-        if (y + 1 >= HEIGHT) {
+    public TETile nbhTile(TETile[][] world, DIRECTION dir) {
+        int nbhX = x + dir.valueX();
+        int nbhY = y + dir.valueY();
+        if (nbhX == -1 || nbhX == WIDTH || nbhY == -1 || nbhY == HEIGHT) {
             return null;
         } else {
-            return new Point(x, y + 1, world[x][y + 1]);
+            System.out.println(nbhX+ ", "+ nbhY + "; Width" + WIDTH);
+            return world[nbhX][nbhY];
         }
     }
 
-    public Point down(TETile[][] world) {
-        if (y - 1 <= 0) {
-            return null;
-        } else {
-            return new Point(x, y - 1, world[x][y - 1]);
-        }
-    }
-
-    public Point right(TETile[][] world) {
-        if (x + 1 >= WIDTH) {
-            return null;
-        } else {
-            return new Point(x + 1, y, world[x + 1][y]);
-        }
-    }
-
-    public Point left(TETile[][] world) {
-        if (x - 1 <= 0) {
-            return null;
-        } else {
-            return new Point(x - 1, y, world[x - 1][y]);
-        }
-    }
-
-    public Set<TETile> neighborsTiles(TETile[][] world) {
+    public Set<TETile> allNbhTiles(TETile[][] world) {
         Set<TETile> tileSet = new HashSet();
-        if (up(world) != null) {
-            tileSet.add(up(world).tile());
+
+        if (nbhTile(world, DIRECTION.UP) != null) {
+            tileSet.add(nbhTile(world, DIRECTION.UP));
         }
-        if (down(world) != null) {
-            tileSet.add(down(world).tile());
+            if (nbhTile(world, DIRECTION.DOWN) != null) {
+            tileSet.add(nbhTile(world, DIRECTION.UP));
         }
-        if (right(world) != null) {
-            tileSet.add(right(world).tile());
+        if (nbhTile(world, DIRECTION.LEFT) != null) {
+            tileSet.add(nbhTile(world, DIRECTION.LEFT));
         }
-        if (left(world) != null) {
-            tileSet.add(left(world).tile());
+        if (nbhTile(world, DIRECTION.RIGHT) != null) {
+            tileSet.add(nbhTile(world, DIRECTION.RIGHT));
         }
         return tileSet;
     }
@@ -112,7 +81,7 @@ public class Point {
 
     public Y_DIRECTION compareY(Point p) {
         int dist = distY(p);
-        return (dist == 0)? Y_DIRECTION.SAME: ((dist > 0)? Y_DIRECTION.TOP: Y_DIRECTION.BOTTOM);
+        return (dist == 0)? Y_DIRECTION.SAME: ((dist > 0)? Y_DIRECTION.UP: Y_DIRECTION.DOWN);
     }
 
     // move only one coordinate and create the new point -- duplicate with another move funciton
@@ -123,6 +92,12 @@ public class Point {
     // move the point based on inputs and create the new point
     public Point move(int dx, int dy) {
         return new Point(x + dx, y + dy);
+    }
+
+    // move the point based on inputs and create the new point
+    public Point move(DIRECTION dir) {
+//        System.out.println(dir.valueX() +","+ dir.valueY());
+        return move(dir.valueX(), dir.valueY());
     }
 
 

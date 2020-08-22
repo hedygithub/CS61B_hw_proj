@@ -67,7 +67,7 @@ public class Main {
     }
 
     private static void saveEditor(Editor editor) {
-        File f = new File("./save_data");
+        File f = new File("./save_input");
         try {
             if (!f.exists()) {
                 f.createNewFile();

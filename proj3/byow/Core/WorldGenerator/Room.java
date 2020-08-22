@@ -11,8 +11,8 @@ import java.util.Set;
  */
 public class Room implements Component {
 
-    private Point pLB; // left bottom point of the room, not its wall
-    private Point pRT; // right top point of the room, not its wall
+    private Point pLB; // left DOWN point of the room, not its wall
+    private Point pRT; // right UP point of the room, not its wall
 
     public Room(Point lb, Point rt) {
         pLB = lb;
@@ -67,7 +67,7 @@ public class Room implements Component {
     // find the nearest point on the wall of the room given a point (assume it's outside the room)
     public Point findNearestPoint(Point point) {
         boolean pXIncluded = (point.compareX(pLB) != X_DIRECTION.LEFT) && (point.compareX(pRT) != X_DIRECTION.RIGHT);
-        boolean pYIncluded = (point.compareY(pLB) != Y_DIRECTION.BOTTOM) && (point.compareY(pRT) != Y_DIRECTION.TOP);
+        boolean pYIncluded = (point.compareY(pLB) != Y_DIRECTION.DOWN) && (point.compareY(pRT) != Y_DIRECTION.UP);
 
         boolean xLBCloser = Math.abs(point.distX(pLB)) <= Math.abs(point.distX(pRT));
         boolean yLBCloser = Math.abs(point.distY(pLB)) <= Math.abs(point.distY(pRT));

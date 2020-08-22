@@ -14,6 +14,7 @@ public class WorldGenerator {
     private static Random rng;
     private int width;
     private int height;
+    private DIRECTION[] moveDirs;
 
     private boolean finished;
     private TETile[][] world;
@@ -21,6 +22,8 @@ public class WorldGenerator {
     private List<Point> floorList;
     private Set<Point> wallSet;
     private Point door;
+    private Avatar avatar;
+    private boolean succeed;
 
     /**
      * Constructors
@@ -30,13 +33,6 @@ public class WorldGenerator {
         rng = new Random(seed);
         width = WIDTH;
         height = HEIGHT;
-        init();
-    }
-
-    public WorldGenerator(Long seed, int w, int h) {
-        rng = new Random(seed);
-        width = w;
-        height = h;
         init();
     }
 
@@ -58,7 +54,7 @@ public class WorldGenerator {
      * Functions
      */
 
-    public TETile[][] World() {
+    public TETile[][] world() {
         if (!finished) {
             throw new IllegalStateException("The world is not yet generated! Please call generate() first.");
         }
@@ -90,16 +86,37 @@ public class WorldGenerator {
         // Clean wall Set
 
         // IMPORTANT: always fill in walls before floors!
-        floorSet = rebuildFloorPoint();
-        wallSet = rebuildWallPoint();
+        wallSet = removeFakeWall();
+        worldFillBatch(floorSet, Tileset.FLOOR);
+        worldFillBatch(wallSet, Tileset.WALL);
 
-        fill(floorSet, Tileset.FLOOR);
-        fill(wallSet, Tileset.WALL);
+        door = Door.generate(wallSet, world, rng);
+        worldFill(door, Tileset.LOCKED_DOOR);
 
-        Point door = Door.generate(wallSet, world, rng);
-
+        avatar = new Avatar(floorList, rng);
+        worldFill(avatar.aP, Tileset.AVATAR);
 
         finished = true;
+    }
+
+    public boolean moveManySteps(List<DIRECTION> dirList) {
+        if (!succeed) {
+            worldFill(avatar.aP, Tileset.FLOOR);
+            for (DIRECTION dir : dirList) {
+                succeed = avatar.move(world, dir);
+            }
+            worldFill(avatar.aP, Tileset.AVATAR);
+        }
+        return succeed;
+    }
+
+    public boolean moveOneStep(DIRECTION dir) {
+        if (!succeed) {
+            worldFill(avatar.aP, Tileset.FLOOR);
+            succeed = avatar.move(world, dir);
+            worldFill(avatar.aP, Tileset.AVATAR);
+        }
+        return succeed;
     }
 
     /**
@@ -126,33 +143,28 @@ public class WorldGenerator {
         return floorList.get(index);
     }
 
-    private Set<Point> rebuildWallPoint() {
+    private Set<Point> removeFakeWall() {
         Set<Point> newWallSet = new HashSet<>();
         for (Point wallPoint : wallSet) {
             if (!floorSet.contains(wallPoint)) {
-                wallPoint.changeTile(Tileset.WALL);
                 newWallSet.add(wallPoint);
             }
         }
         return newWallSet;
     }
 
-    private Set<Point> rebuildFloorPoint() {
-        Set<Point> newFloorSet = new HashSet<>();
-        for (Point floorPoint : floorSet) {
-            floorPoint.changeTile(Tileset.FLOOR);
-            newFloorSet.add(floorPoint);
-        }
-        return newFloorSet;
-    }
 
 
 
     // fill in the tileset
-    private void fill(Set<Point> set, TETile type) {
+    private void worldFillBatch(Set<Point> set, TETile tile) {
         for (Point p: set) {
-            world[p.x()][p.y()] = type;
+            worldFill(p, tile);
         }
+    }
+
+    private void worldFill(Point p, TETile tile) {
+        world[p.x()][p.y()] = tile;
     }
 
 }

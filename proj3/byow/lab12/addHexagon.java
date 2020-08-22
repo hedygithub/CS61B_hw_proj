@@ -47,7 +47,7 @@ public class addHexagon {
      * @param xSL: left point at short side.
      * @param ySL: left point at short side.
      * @param sideLength: short side length
-     * @param direction: -1 from up to bottom; 1 from bottom to up.
+     * @param direction: -1 from up to DOWN; 1 from DOWN to up.
      */
     private TETile[][] addQuadrangle(TETile[][] world, int xSL, int ySL, int sideLength, int direction) {
         for(int j = 0; j < sideLength; j ++) {

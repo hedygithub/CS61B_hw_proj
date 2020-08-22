@@ -52,11 +52,11 @@ public class Hallway implements Component{
             wallSet.add(new Point(pT.x() + 1, cornerY));
             wallSet.add(new Point(pT.x() - 1, cornerY));
 
-            // starting at (pT.x(), pB.y()), go bottom or top, may ending at pT(pT.x(), pT.y())
+            // starting at (pT.x(), pB.y()), go DOWN or UP, may ending at pT(pT.x(), pT.y())
             addFloorsAndWalls(floorSet, floorList, wallSet, true, pT.x(), yDirection.value());
 
         } else {
-            // starting at pB(pB.x(), pB.y()), go bottom or top, may ending at (pT.x(), pT.y())
+            // starting at pB(pB.x(), pB.y()), go DOWN or UP, may ending at (pT.x(), pT.y())
             addFloorsAndWalls(floorSet, floorList, wallSet, true, pB.x(), yDirection.value());
 
             // walls at the corner (pB.x(), pT.y())

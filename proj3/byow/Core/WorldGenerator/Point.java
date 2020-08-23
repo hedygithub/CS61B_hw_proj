@@ -41,7 +41,7 @@ public class Point {
         if (nbhX == -1 || nbhX == WIDTH || nbhY == -1 || nbhY == HEIGHT) {
             return null;
         } else {
-            System.out.println(nbhX+ ", "+ nbhY + "; Width" + WIDTH);
+//            System.out.println(nbhX+ ", "+ nbhY + "; Width" + WIDTH);
             return world[nbhX][nbhY];
         }
     }
@@ -66,21 +66,21 @@ public class Point {
 
 
     // relative position and distance of this point compared to p
-    public int distX(Point p) {
+    public int distToMeX(Point p) {
         return p.x - this.x;
     }
 
-    public int distY(Point p) {
+    public int distToMeY(Point p) {
         return p.y - this.y;
     }
 
-    public X_DIRECTION compareX(Point p) {
-        int dist = distX(p);
+    public X_DIRECTION dirToMeX(Point p) {
+        int dist = distToMeX(p);
         return (dist == 0)? X_DIRECTION.SAME: ((dist > 0)? X_DIRECTION.RIGHT: X_DIRECTION.LEFT);
     }
 
-    public Y_DIRECTION compareY(Point p) {
-        int dist = distY(p);
+    public Y_DIRECTION dirToMeY(Point p) {
+        int dist = distToMeY(p);
         return (dist == 0)? Y_DIRECTION.SAME: ((dist > 0)? Y_DIRECTION.UP: Y_DIRECTION.DOWN);
     }
 

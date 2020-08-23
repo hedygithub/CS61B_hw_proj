@@ -66,14 +66,17 @@ public class Room implements Component {
 
     // find the nearest point on the wall of the room given a point (assume it's outside the room)
     public Point findNearestPoint(Point point) {
-        boolean pXIncluded = (point.compareX(pLB) != X_DIRECTION.LEFT) && (point.compareX(pRT) != X_DIRECTION.RIGHT);
-        boolean pYIncluded = (point.compareY(pLB) != Y_DIRECTION.DOWN) && (point.compareY(pRT) != Y_DIRECTION.UP);
+        boolean pXIncluded = (!point.dirToMeX(pLB).equals(X_DIRECTION.RIGHT)) && (!point.dirToMeX(pRT).equals(X_DIRECTION.LEFT));
+        boolean pYIncluded = (!point.dirToMeY(pLB).equals(Y_DIRECTION.UP)) && (!point.dirToMeY(pRT).equals(Y_DIRECTION.DOWN));
 
-        boolean xLBCloser = Math.abs(point.distX(pLB)) <= Math.abs(point.distX(pRT));
-        boolean yLBCloser = Math.abs(point.distY(pLB)) <= Math.abs(point.distY(pRT));
+        boolean xLBCloser = Math.abs(point.distToMeX(pLB)) <= Math.abs(point.distToMeX(pRT));
+        boolean yLBCloser = Math.abs(point.distToMeY(pLB)) <= Math.abs(point.distToMeY(pRT));
 
         int xRes = xLBCloser? pLB.x() : pRT.x();
         int yRes = yLBCloser? pLB.y() : pRT.y();
+
+        int a = point.dirToMeX(pLB).value();
+        int b = point.dirToMeX(pRT).value();
 
         xRes = pXIncluded? point.x() : xRes;
         yRes = pYIncluded? point.y() : yRes;

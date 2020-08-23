@@ -26,20 +26,21 @@ public class Hallway implements Component{
     @Override
     // from pB to pT: first go horizontally, then go vertically
     public void generate(Set<Point> floorSet, List<Point> floorList, Set<Point> wallSet, TETile[][] world) {
-        // System.out.println("begin:" + pB.x() + "," + pB.y() + "; target:" +  pT.x() + "," +  pT.y() + "; xFirst:" + xFirst);
+//         System.out.println("near:" + pB.x() + "," + pB.y()  + "; xFirst:" + xFirst);
 
         // find the start point which should be a wall point
-        X_DIRECTION xDirection = pB.compareX(pT);
-        Y_DIRECTION yDirection = pB.compareY(pT);
+        X_DIRECTION xDirection = pB.dirToMeX(pT);
+        Y_DIRECTION yDirection = pB.dirToMeY(pT);
         if (xDirection == X_DIRECTION.SAME || (!xFirst && yDirection != Y_DIRECTION.SAME)) {
             pB = pB.move(yDirection.value(), true);
-            yDirection = pB.compareY(pT);
+            yDirection = pB.dirToMeY(pT);
         }
         else if (yDirection == Y_DIRECTION.SAME || (xFirst && xDirection != X_DIRECTION.SAME)) {
             pB = pB.move(xDirection.value(), false);
-            xDirection = pB.compareX(pT);
+            xDirection = pB.dirToMeX(pT);
         }
 
+//        System.out.println("begin:" + pB.x() + "," + pB.y() + "; target:" +  pT.x() + "," +  pT.y());
         // build the hallway
         if (xFirst) {
             // starting at pB(pB.x(), pB.y()), go left or right, may ending at (pT.x(), pB.y())

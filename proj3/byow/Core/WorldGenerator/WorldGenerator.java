@@ -14,7 +14,6 @@ public class WorldGenerator {
     private static Random rng;
     private int width;
     private int height;
-    private DIRECTION[] moveDirs;
 
     private boolean finished;
     private TETile[][] world;
@@ -23,7 +22,7 @@ public class WorldGenerator {
     private Set<Point> wallSet;
     private Point door;
     private Avatar avatar;
-    private boolean succeed;
+    private boolean succeed = false;
 
     /**
      * Constructors
@@ -103,7 +102,8 @@ public class WorldGenerator {
         if (!succeed) {
             worldFill(avatar.aP, Tileset.FLOOR);
             for (DIRECTION dir : dirList) {
-                succeed = avatar.move(world, dir);
+                avatar.move(world, dir);
+                refreshSucceed();
             }
             worldFill(avatar.aP, Tileset.AVATAR);
         }
@@ -113,10 +113,17 @@ public class WorldGenerator {
     public boolean moveOneStep(DIRECTION dir) {
         if (!succeed) {
             worldFill(avatar.aP, Tileset.FLOOR);
-            succeed = avatar.move(world, dir);
+            avatar.move(world, dir);
+            refreshSucceed();
             worldFill(avatar.aP, Tileset.AVATAR);
         }
         return succeed;
+    }
+
+    public void refreshSucceed() {
+        if(avatar.aP.equals(door)){
+            succeed = true;
+        }
     }
 
     /**

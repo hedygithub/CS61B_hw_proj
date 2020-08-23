@@ -20,7 +20,7 @@ public class Engine {
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
-        boolean succeed = false;
+
         initialize();
         StdDraw.show();
         StdDraw.enableDoubleBuffering();
@@ -43,11 +43,11 @@ public class Engine {
             }
         }
 
-        succeed = wg.moveManySteps(moveDirList);
+        boolean succeed = wg.moveManySteps(moveDirList);
         TETile[][] finalWorldFrame = wg.world();
         ter.initialize(WIDTH, HEIGHT + HEIGHT_TOP);
         if (succeed) {
-            ter.renderFrame(finalWorldFrame, "Congratulations! You open the door!");
+            ter.renderFrame(finalWorldFrame, "Congratulations! You opened the door!");
         } else {
             ter.renderFrame(finalWorldFrame);
         }
@@ -62,7 +62,6 @@ public class Engine {
                 int x = ter.stdDrawIMouseX();
                 int y = ter.stdDrawIMouseY();
                 TETile tile = finalWorldFrame[x][y];
-                System.out.println(x +","+y + "; " +tile.description());
                 ter.renderFrame(finalWorldFrame, tile.description());
             } else if (ter.stdDrawHasNextKeyTyped()) {
                 b = c;

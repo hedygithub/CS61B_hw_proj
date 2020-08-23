@@ -20,16 +20,13 @@ public class Avatar {
         return avatarPoint;
     }
 
-    public boolean move(TETile[][] world, Constants.DIRECTION moveDir) {
+    public void move(TETile[][] world, Constants.DIRECTION moveDir) {
         TETile towardTile = aP.nbhTile(world, moveDir);
         if (towardTile == null || towardTile == Tileset.WALL || towardTile == Tileset.NOTHING) {
-            return false;
         } else if (towardTile == Tileset.LOCKED_DOOR) {
             aP = aP.move(moveDir);
-            return true;
         } else {
             aP = aP.move(moveDir);
-            return false;
         }
     }
 }

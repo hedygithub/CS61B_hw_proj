@@ -14,6 +14,13 @@ public class Constants {
     public static final int ROOM_WIDTH_LIMIT = 6;
     public static final int ROOM_HEIGHT_LIMIT = 4;
 
+    // MUST BE SORTED!
+    public static final char[] MOVE_KEYPRESS = {'A', 'D', 'S', 'W', 'a', 'd', 's', 'w'};
+
+    public enum INPUT_SOURCE {
+        MOUSE, KEYBOARD, STRING
+    }
+
     public enum X_DIRECTION  {
         LEFT(-1),RIGHT(1),SAME(0);
 
@@ -48,5 +55,19 @@ public class Constants {
         public int[] value() {return this.value;}
         public int valueX() {return this.value[0];};
         public int valueY() {return this.value[1];};
+
+        public static DIRECTION fromChar(char c) {
+            if (c == 'W' ||  c == 'w') {
+                return UP;
+            } else if (c == 'S' ||  c == 's') {
+                return DOWN;
+            } else if (c == 'A' ||  c == 'a') {
+                return LEFT;
+            } else if (c == 'D' ||  c == 'd') {
+                return RIGHT;
+            } else {
+                return SAME;
+            }
+        }
     }
 }

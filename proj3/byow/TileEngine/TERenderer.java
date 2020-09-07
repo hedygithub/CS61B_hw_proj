@@ -88,21 +88,26 @@ public class TERenderer {
      * @param world the 2D TETile[][] array to render
      */
     public void renderFrame(TETile[][] world) {
-        int numXTiles = world.length;
-        int numYTiles = world[0].length;
-        StdDraw.clear(new Color(0, 0, 0));
-        for (int x = 0; x < numXTiles; x += 1) {
-            for (int y = 0; y < numYTiles; y += 1) {
-                if (world[x][y] == null) {
-                    throw new IllegalArgumentException("Tile at position x=" + x + ", y=" + y
-                            + " is null.");
-                }
-                world[x][y].draw(x + xOffset, y + yOffset);
-            }
-        }
-        StdDraw.show();
-        StdDraw.enableDoubleBuffering();
+        renderFrame(world, "");
+//        int numXTiles = world.length;
+//        int numYTiles = world[0].length;
+//        StdDraw.clear(new Color(0, 0, 0));
+//        for (int x = 0; x < numXTiles; x += 1) {
+//            for (int y = 0; y < numYTiles; y += 1) {
+//                if (world[x][y] == null) {
+//                    throw new IllegalArgumentException("Tile at position x=" + x + ", y=" + y
+//                            + " is null.");
+//                }
+//                world[x][y].draw(x + xOffset, y + yOffset);
+//            }
+//        }
+//        StdDraw.show();
+//        StdDraw.enableDoubleBuffering();
     }
+
+    /**
+     * New functions
+     */
 
     public void renderFrame(TETile[][] world, String info) {
         int numXTiles = world.length;
@@ -125,25 +130,66 @@ public class TERenderer {
         StdDraw.enableDoubleBuffering();
     }
 
-    public boolean stdDrawHasNextKeyTyped() {
-        return StdDraw.hasNextKeyTyped();
+    // launch the stdDraw window with the main menu
+    // TODO: move this to the stdDraw decorator
+    public void menuScreen() {
+        StdDraw.setPenColor(Color.WHITE);
+        Font fontTitle = new Font("Monaco", Font.BOLD, 40);
+        Font fontText = new Font("Monaco", Font.BOLD, 20);
+
+        StdDraw.clear(new Color(0, 0, 0));
+        StdDraw.setFont(fontTitle);
+        StdDraw.text(width / 2, 3 * height / 4, "CS6IB Project 3");
+        StdDraw.text(width / 2, 3 * height / 4 - 4, "Game of HD & LYC");
+
+        StdDraw.setFont(fontText);
+        StdDraw.text(width / 2, 1 * height / 3 + 2, "New Game (N)");
+        StdDraw.text(width / 2, 1 * height / 3, "Load Game (L)");
+        StdDraw.text(width / 2, 1 * height / 3 - 2, "Quit (Q)");
+        StdDraw.show();
+        StdDraw.enableDoubleBuffering();
     }
 
-    public char stdDrawNextKeyTyped() {
-        return StdDraw.nextKeyTyped();
+    // launch the stdDraw window with the seed input menu
+    // TODO: move this to the stdDraw decorator
+    public void seedScreen(String info) {
+        StdDraw.setPenColor(Color.WHITE);
+        Font fontTitle = new Font("Monaco", Font.BOLD, 40);
+        Font fontText = new Font("Monaco", Font.BOLD, 20);
+
+        StdDraw.clear(new Color(0, 0, 0));
+        StdDraw.setFont(fontTitle);
+        StdDraw.text(width / 2, 3 * height / 4, "CS6IB Project 3");
+        StdDraw.text(width / 2, 3 * height / 4 - 4, "Game of HD & LYC");
+        StdDraw.text(width / 2, 3 * height / 4 - 8, "New Game");
+
+        StdDraw.setFont(fontText);
+        StdDraw.text(width / 2, 1 * height / 3 + 2, "Please type in your seed, then press S");
+        StdDraw.text(width / 2, 1 * height / 3, info);
+
+        StdDraw.show();
+        StdDraw.enableDoubleBuffering();
     }
 
-    public boolean stdDrawIsMousePressed() {
-        return StdDraw.isMousePressed();
-    }
-
-    public int stdDrawIMouseX() {
-        return (int)StdDraw.mouseX();
-    }
-
-    public int stdDrawIMouseY() {
-        return (int)StdDraw.mouseY();
-    }
+//    public boolean stdDrawHasNextKeyTyped() {
+//        return StdDraw.hasNextKeyTyped();
+//    }
+//
+//    public char stdDrawNextKeyTyped() {
+//        return StdDraw.nextKeyTyped();
+//    }
+//
+//    public boolean stdDrawIsMousePressed() {
+//        return StdDraw.isMousePressed();
+//    }
+//
+//    public int stdDrawIMouseX() {
+//        return (int)StdDraw.mouseX();
+//    }
+//
+//    public int stdDrawIMouseY() {
+//        return (int)StdDraw.mouseY();
+//    }
 
 
 }

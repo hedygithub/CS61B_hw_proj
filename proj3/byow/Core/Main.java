@@ -13,10 +13,12 @@ public class Main {
             Engine engine = new Engine();
             engine.interactWithInputString(args[0]);
             System.out.println(engine.toString());
+            //System.exit(0);
         } else {
             Engine engine = new Engine();
             engine.interactWithKeyboard();
-            System.exit(1);
+            System.out.println(engine.toString());
+            System.exit(0);
         }
     }
 }

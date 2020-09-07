@@ -98,17 +98,17 @@ public class WorldGenerator {
         finished = true;
     }
 
-    public boolean moveManySteps(List<DIRECTION> dirList) {
-        if (!succeed) {
-            worldFill(avatar.aP, Tileset.FLOOR);
-            for (DIRECTION dir : dirList) {
-                avatar.move(world, dir);
-                refreshSucceed();
-            }
-            worldFill(avatar.aP, Tileset.AVATAR);
-        }
-        return succeed;
-    }
+//    public boolean moveManySteps(List<DIRECTION> dirList) {
+//        if (!succeed) {
+//            worldFill(avatar.aP, Tileset.FLOOR);
+//            for (DIRECTION dir : dirList) {
+//                avatar.move(world, dir);
+//                refreshSucceed();
+//            }
+//            worldFill(avatar.aP, Tileset.AVATAR);
+//        }
+//        return succeed;
+//    }
 
     public boolean moveOneStep(DIRECTION dir) {
         if (!succeed) {
@@ -124,6 +124,11 @@ public class WorldGenerator {
         if(avatar.aP.equals(door)){
             succeed = true;
         }
+    }
+
+    // replace all "succeed" output functions by void?
+    public boolean checkSucceed() {
+        return succeed;
     }
 
     /**

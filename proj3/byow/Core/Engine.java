@@ -1,9 +1,13 @@
 package byow.Core;
 
 import byow.Core.WorldGenerator.WorldGenerator;
+import byow.Core.WorldProcessor.InputSource;
+import byow.Core.WorldProcessor.KeyboardSource;
+import byow.Core.WorldProcessor.StringSource;
+import byow.Core.WorldProcessor.WorldProcessor;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
-import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
 import java.io.*;
@@ -21,93 +25,98 @@ public class Engine {
      */
     public void interactWithKeyboard() {
 
-        initialize();
-        StdDraw.show();
-        StdDraw.enableDoubleBuffering();
+        ter.initialize(WIDTH / 2, HEIGHT + HEIGHT_TOP);
+        ter.menuScreen();
 
-        String input = transferKBtoInput();
-        System.out.println(input);
-        String seedS = fromInputToSeed(input);
+        WorldProcessor wp = new WorldProcessor();
+        InputSource is = new KeyboardSource();
 
-        long seed = Integer.parseInt(seedS);
-        WorldGenerator wg = new WorldGenerator(seed);
-        wg.generate();
+        wp.processWorld(is, ter);
 
-        List<DIRECTION> moveDirList = new LinkedList<>();
-        // get play code of Load Part
-        if (1 + seedS.length() + 1 <= input.length()) {
-            int moveStartPos = seedS.length() + 1;
-            for (int i = moveStartPos; i < input.length(); i++) {
-                char c = input.charAt(i);
-                moveDirList.add(fromCharToDir(c));
-            }
-        }
-
-        boolean succeed = wg.moveManySteps(moveDirList);
-        TETile[][] finalWorldFrame = wg.world();
-        ter.initialize(WIDTH, HEIGHT + HEIGHT_TOP);
-        if (succeed) {
-            ter.renderFrame(finalWorldFrame, "Congratulations! You opened the door!");
-        } else {
-            ter.renderFrame(finalWorldFrame);
-        }
-
-
-        char b;
-        char c = input.charAt(input.length() - 1);
-        while (true) {
-            if (!(ter.stdDrawIsMousePressed() || ter.stdDrawHasNextKeyTyped())) {
-                continue;
-            } else if (ter.stdDrawIsMousePressed()) {
-                int x = ter.stdDrawIMouseX();
-                int y = ter.stdDrawIMouseY();
-                TETile tile = finalWorldFrame[x][y];
-                ter.renderFrame(finalWorldFrame, tile.description());
-            } else if (ter.stdDrawHasNextKeyTyped()) {
-                b = c;
-                c = ter.stdDrawNextKeyTyped();
-                input += c;
-                if (b + c == ':' + 'q' || b + c == ':' + 'Q') {
-                    saveInput(input.substring(0, input.length() - 2));
-                    break;
-                } else {
-                    succeed = wg.moveOneStep(fromCharToDir(c));
-                    finalWorldFrame = wg.world();
-                    if (succeed) {
-                        ter.renderFrame(finalWorldFrame, "Congratulations! You opened the door!");
-                    } else {
-                        ter.renderFrame(finalWorldFrame);
-                    }
-                }
-            }
-        }
-        return;
+//        String input = transferKBtoInput();
+//        System.out.println(input);
+//        String seedS = fromInputToSeed(input);
+//
+//        long seed = Integer.parseInt(seedS);
+//        WorldGenerator wg = new WorldGenerator(seed);
+//        wg.generate();
+//
+//        List<DIRECTION> moveDirList = new LinkedList<>();
+//        // get play code of Load Part
+//        if (1 + seedS.length() + 1 <= input.length()) {
+//            int moveStartPos = seedS.length() + 1;
+//            for (int i = moveStartPos; i < input.length(); i++) {
+//                char c = input.charAt(i);
+//                moveDirList.add(fromCharToDir(c));
+//            }
+//        }
+//
+//        boolean succeed = wg.moveManySteps(moveDirList);
+//        TETile[][] finalWorldFrame = wg.world();
+//        ter.initialize(WIDTH, HEIGHT + HEIGHT_TOP);
+//        if (succeed) {
+//            ter.renderFrame(finalWorldFrame, "Congratulations! You opened the door!");
+//        } else {
+//            ter.renderFrame(finalWorldFrame);
+//        }
+//
+//
+//        char b;
+//        char c = input.charAt(input.length() - 1);
+//        while (true) {
+//            if (!(ter.stdDrawIsMousePressed() || ter.stdDrawHasNextKeyTyped())) {
+//                continue;
+//            } else if (ter.stdDrawIsMousePressed()) {
+//                int x = ter.stdDrawIMouseX();
+//                int y = ter.stdDrawIMouseY();
+//                TETile tile = finalWorldFrame[x][y];
+//                ter.renderFrame(finalWorldFrame, tile.description());
+//            } else if (ter.stdDrawHasNextKeyTyped()) {
+//                b = c;
+//                c = ter.stdDrawNextKeyTyped();
+//                input += c;
+//                if (b + c == ':' + 'q' || b + c == ':' + 'Q') {
+//                    saveInput(input.substring(0, input.length() - 2));
+//                    break;
+//                } else {
+//                    succeed = wg.moveOneStep(fromCharToDir(c));
+//                    finalWorldFrame = wg.world();
+//                    if (succeed) {
+//                        ter.renderFrame(finalWorldFrame, "Congratulations! You opened the door!");
+//                    } else {
+//                        ter.renderFrame(finalWorldFrame);
+//                    }
+//                }
+//            }
+//        }
+//        return;
     }
 
 
-    private void initialize() {
-        int width = WIDTH / 2;
-        int height = HEIGHT + HEIGHT_TOP;
-        StdDraw.setCanvasSize(width * 16, height * 16);
-        StdDraw.setXscale(0, width);
-        StdDraw.setYscale(0, height);
-        StdDraw.setPenColor(Color.WHITE);
-        Font fontTitle = new Font("Monaco", Font.BOLD, 40);
-        Font fontText = new Font("Monaco", Font.BOLD, 20);
+//    private void initialize() {
+//        int width = WIDTH / 2;
+//        int height = HEIGHT + HEIGHT_TOP;
+//        StdDraw.setCanvasSize(width * 16, height * 16);
+//        StdDraw.setXscale(0, width);
+//        StdDraw.setYscale(0, height);
+//        StdDraw.setPenColor(Color.WHITE);
+//        Font fontTitle = new Font("Monaco", Font.BOLD, 40);
+//        Font fontText = new Font("Monaco", Font.BOLD, 20);
+//
+//
+//        StdDraw.clear(new Color(0, 0, 0));
+//        StdDraw.setFont(fontTitle);
+//        StdDraw.text(width / 2, 3 * height / 4, "CS6IB Project 3");
+//        StdDraw.text(width / 2, 3 * height / 4 - 4, "Game of HD & LYC");
+//
+//        StdDraw.setFont(fontText);
+//        StdDraw.text(width / 2, 1 * height / 3 + 2, "New Game (N)");
+//        StdDraw.text(width / 2, 1 * height / 3, "Load Game (L)");
+//        StdDraw.text(width / 2, 1 * height / 3 - 2, "Quit (Q)");
+//        StdDraw.show();
+//        StdDraw.enableDoubleBuffering();
+//    }
 
-
-        StdDraw.clear(new Color(0, 0, 0));
-        StdDraw.setFont(fontTitle);
-        StdDraw.text(width / 2, 3 * height / 4, "CS6IB Project 3");
-        StdDraw.text(width / 2, 3 * height / 4 - 4, "Game of HD & LYC");
-
-        StdDraw.setFont(fontText);
-        StdDraw.text(width / 2, 1 * height / 3 + 2, "New Game (N)");
-        StdDraw.text(width / 2, 1 * height / 3, "Load Game (L)");
-        StdDraw.text(width / 2, 1 * height / 3 - 2, "Quit (Q)");
-        StdDraw.show();
-        StdDraw.enableDoubleBuffering();
-    }
 
     private void letUserType(String typed) {
         int width = WIDTH / 2;
@@ -123,8 +132,8 @@ public class Engine {
         StdDraw.text(width / 2, 1 * height / 3 + 2, "Please type the seed");
         StdDraw.text(width / 2, 1 * height / 3, "Format: N#S, # is number");
         StdDraw.text(width / 2, 1 * height / 3 - 2, "You've typed: " + typed);
-        StdDraw.show();
-        StdDraw.enableDoubleBuffering();
+//        StdDraw.show();
+//        StdDraw.enableDoubleBuffering();
     }
 
     private String transferKBtoInput() {
@@ -196,50 +205,59 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        boolean succeed = false;
-        if (input == null) {
-            throw new IllegalArgumentException();
-        } else {
 
-            char firstChar = input.charAt(0);
-            // get Real Input String
-            if (firstChar == 'L' || firstChar == 'l') {
-                input = loadInput() + input.substring(1, input.length());
-            }
-            // get Seed from Input
-            String seedS = fromInputToSeed(input);
+        WorldProcessor wp = new WorldProcessor();
+        InputSource is = new StringSource(input);
 
-            // generate the initial world
-            long seed = Integer.parseInt(seedS);
-            WorldGenerator wg = new WorldGenerator(seed);
-            wg.generate();
+        wp.processWorld(is, ter);
 
-            // get play code
-            int moveStartPos = seedS.length() + 1;
-            List<DIRECTION> moveDirList = new LinkedList<>();
+        return wp.getWorld();
 
-            for (int i = moveStartPos; i < input.length() - 1; i++) {
-                char c = input.charAt(i);
-                char n = input.charAt(i + 1);
-                if (c + n == ':' + 'q' || c + n == ':' + 'Q') {
-                    saveInput(input.substring(0, i));
-                    break;
-                } else {
-                    moveDirList.add(fromCharToDir(c));
-                }
-            }
 
-            succeed = wg.moveManySteps(moveDirList);
-
-            TETile[][] finalWorldFrame = wg.world();
-
-            if (succeed) {
-                ter.renderFrame(finalWorldFrame, "Congratulations! You open the door!");
-            } else {
-                ter.renderFrame(finalWorldFrame);
-            }
-            return finalWorldFrame;
-        }
+//        boolean succeed = false;
+//        if (input == null) {
+//            throw new IllegalArgumentException("Please provide a string that meets all requirements in this mode!");
+//        } else {
+//
+//            char firstChar = input.charAt(0);
+//            // get Real Input String
+//            if (firstChar == 'L' || firstChar == 'l') {
+//                input = loadInput() + input.substring(1, input.length());
+//            }
+//            // get Seed from Input
+//            String seedS = fromInputToSeed(input);
+//
+//            // generate the initial world
+//            long seed = Integer.parseInt(seedS);
+//            WorldGenerator wg = new WorldGenerator(seed);
+//            wg.generate();
+//
+//            // get play code
+//            int moveStartPos = seedS.length() + 1;
+//            List<DIRECTION> moveDirList = new LinkedList<>();
+//
+//            for (int i = moveStartPos; i < input.length() - 1; i++) {
+//                char c = input.charAt(i);
+//                char n = input.charAt(i + 1);
+//                if (c + n == ':' + 'q' || c + n == ':' + 'Q') {
+//                    saveInput(input.substring(0, i));
+//                    break;
+//                } else {
+//                    moveDirList.add(fromCharToDir(c));
+//                }
+//            }
+//
+//            succeed = wg.moveManySteps(moveDirList);
+//
+//            TETile[][] finalWorldFrame = wg.world();
+//
+//            if (succeed) {
+//                ter.renderFrame(finalWorldFrame, "Congratulations! You open the door!");
+//            } else {
+//                ter.renderFrame(finalWorldFrame);
+//            }
+//            return finalWorldFrame;
+//        }
     }
 
     private String fromInputToSeed (String input) {

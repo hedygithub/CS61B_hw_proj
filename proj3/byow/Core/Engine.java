@@ -118,60 +118,60 @@ public class Engine {
 //    }
 
 
-    private void letUserType(String typed) {
-        int width = WIDTH / 2;
-        int height = HEIGHT + HEIGHT_TOP;
-
-        Font fontText = new Font("Monaco", Font.BOLD, 20);
-        StdDraw.clear(new Color(0, 0, 0));
-        Font fontTitle = new Font("Monaco", Font.BOLD, 40);
-        StdDraw.setFont(fontTitle);
-        StdDraw.text(width / 2, 3 * height / 4, "Create New World");
-
-        StdDraw.setFont(fontText);
-        StdDraw.text(width / 2, 1 * height / 3 + 2, "Please type the seed");
-        StdDraw.text(width / 2, 1 * height / 3, "Format: N#S, # is number");
-        StdDraw.text(width / 2, 1 * height / 3 - 2, "You've typed: " + typed);
-//        StdDraw.show();
-//        StdDraw.enableDoubleBuffering();
-    }
-
-    private String transferKBtoInput() {
-        String input = "";
-        char firstChar;
-        while (true) {
-            if (!StdDraw.hasNextKeyTyped()) {
-                continue;
-            } else {
-                firstChar = StdDraw.nextKeyTyped();
-                break;
-            }
-        }
-
-        if (firstChar == 'l' || firstChar == 'L') {
-            input = loadInput();
-        } else if (firstChar == 'N' || firstChar == 'n') {
-
-            char c = firstChar;
-            input += c;
-            letUserType(input);
-            while (true) {
-                if (!StdDraw.hasNextKeyTyped()) {
-                    continue;
-                } else {
-                    c = StdDraw.nextKeyTyped();
-                    input += c;
-                    letUserType(input);
-                    if (c == 's' || c == 'S') {
-                        break;
-                    }
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("please start with N or start with L");
-        }
-        return input;
-    }
+//    private void letUserType(String typed) {
+//        int width = WIDTH / 2;
+//        int height = HEIGHT + HEIGHT_TOP;
+//
+//        Font fontText = new Font("Monaco", Font.BOLD, 20);
+//        StdDraw.clear(new Color(0, 0, 0));
+//        Font fontTitle = new Font("Monaco", Font.BOLD, 40);
+//        StdDraw.setFont(fontTitle);
+//        StdDraw.text(width / 2, 3 * height / 4, "Create New World");
+//
+//        StdDraw.setFont(fontText);
+//        StdDraw.text(width / 2, 1 * height / 3 + 2, "Please type the seed");
+//        StdDraw.text(width / 2, 1 * height / 3, "Format: N#S, # is number");
+//        StdDraw.text(width / 2, 1 * height / 3 - 2, "You've typed: " + typed);
+////        StdDraw.show();
+////        StdDraw.enableDoubleBuffering();
+//    }
+//
+//    private String transferKBtoInput() {
+//        String input = "";
+//        char firstChar;
+//        while (true) {
+//            if (!StdDraw.hasNextKeyTyped()) {
+//                continue;
+//            } else {
+//                firstChar = StdDraw.nextKeyTyped();
+//                break;
+//            }
+//        }
+//
+//        if (firstChar == 'l' || firstChar == 'L') {
+//            input = loadInput();
+//        } else if (firstChar == 'N' || firstChar == 'n') {
+//
+//            char c = firstChar;
+//            input += c;
+//            letUserType(input);
+//            while (true) {
+//                if (!StdDraw.hasNextKeyTyped()) {
+//                    continue;
+//                } else {
+//                    c = StdDraw.nextKeyTyped();
+//                    input += c;
+//                    letUserType(input);
+//                    if (c == 's' || c == 'S') {
+//                        break;
+//                    }
+//                }
+//            }
+//        } else {
+//            throw new IllegalArgumentException("please start with N or start with L");
+//        }
+//        return input;
+//    }
 
 
 
@@ -259,81 +259,81 @@ public class Engine {
 //            return finalWorldFrame;
 //        }
     }
-
-    private String fromInputToSeed (String input) {
-        char firstChar = input.charAt(0);
-        int seedStartPos = 1;
-        String seedS = "";
-
-        if (firstChar == 'N' || firstChar == 'n') {
-            for (int i = seedStartPos; i < input.length(); i++) {
-                char c = input.charAt(i);
-                if (c == 'S' || c == 's') {
-                    break;
-                } else if (c >= '0' && c <= '9') {
-                    seedS += c;
-                } else {
-                    throw new IllegalArgumentException("please start with N end with S, or start with L");
-                }
-            }
-        }
-        return seedS;
-    }
-
-    private DIRECTION fromCharToDir (char c) {
-        DIRECTION dir;
-        if (c == 'W' ||  c == 'w') {
-            dir = DIRECTION.UP;
-        } else if (c == 'S' ||  c == 's') {
-            dir = DIRECTION.DOWN;
-        } else if (c == 'A' ||  c == 'a') {
-            dir = DIRECTION.LEFT;
-        } else if (c == 'D' ||  c == 'd') {
-            dir = DIRECTION.RIGHT;
-        } else {
-            dir = DIRECTION.SAME;
-        }
-        return dir;
-    }
-
-
-    // saveInput
-    private static String loadInput() {
-        File f = new File("./save_input.txt");
-        if (f.exists()) {
-            try {
-                FileReader fr = new FileReader(f);
-                BufferedReader br = new BufferedReader(fr);
-                String input = br.readLine();
-                br.close();
-                return input;
-            } catch (FileNotFoundException e) {
-                System.out.println("file not found");
-                System.exit(0);
-            } catch (IOException e) {
-                System.out.println(e);
-                System.exit(0);
-            }
-        }
-
-        /* In the case no Editor has been saved yet, we return a new one. */
-        return "";
-    }
-
-    private static void saveInput(String input) {
-        File f = new File("./save_input.txt");
-        try {
-            f.delete();
-            f.createNewFile();
-            FileWriter fw = new FileWriter(f);
-            fw.write(input);
-            fw.close();
-        }  catch (FileNotFoundException e) {
-            System.out.println("file not found");
-            System.exit(0);
-        } catch (IOException e) {
-            System.out.println(e);
-            System.exit(0);
-        }
-    }
+//
+//    private String fromInputToSeed (String input) {
+//        char firstChar = input.charAt(0);
+//        int seedStartPos = 1;
+//        String seedS = "";
+//
+//        if (firstChar == 'N' || firstChar == 'n') {
+//            for (int i = seedStartPos; i < input.length(); i++) {
+//                char c = input.charAt(i);
+//                if (c == 'S' || c == 's') {
+//                    break;
+//                } else if (c >= '0' && c <= '9') {
+//                    seedS += c;
+//                } else {
+//                    throw new IllegalArgumentException("please start with N end with S, or start with L");
+//                }
+//            }
+//        }
+//        return seedS;
+//    }
+//
+//    private DIRECTION fromCharToDir (char c) {
+//        DIRECTION dir;
+//        if (c == 'W' ||  c == 'w') {
+//            dir = DIRECTION.UP;
+//        } else if (c == 'S' ||  c == 's') {
+//            dir = DIRECTION.DOWN;
+//        } else if (c == 'A' ||  c == 'a') {
+//            dir = DIRECTION.LEFT;
+//        } else if (c == 'D' ||  c == 'd') {
+//            dir = DIRECTION.RIGHT;
+//        } else {
+//            dir = DIRECTION.SAME;
+//        }
+//        return dir;
+//    }
+//
+//
+//    // saveInput
+//    private static String loadInput() {
+//        File f = new File("./save_input.txt");
+//        if (f.exists()) {
+//            try {
+//                FileReader fr = new FileReader(f);
+//                BufferedReader br = new BufferedReader(fr);
+//                String input = br.readLine();
+//                br.close();
+//                return input;
+//            } catch (FileNotFoundException e) {
+//                System.out.println("file not found");
+//                System.exit(0);
+//            } catch (IOException e) {
+//                System.out.println(e);
+//                System.exit(0);
+//            }
+//        }
+//
+//        /* In the case no Editor has been saved yet, we return a new one. */
+//        return "";
+//    }
+//
+//    private static void saveInput(String input) {
+//        File f = new File("./save_input.txt");
+//        try {
+//            f.delete();
+//            f.createNewFile();
+//            FileWriter fw = new FileWriter(f);
+//            fw.write(input);
+//            fw.close();
+//        }  catch (FileNotFoundException e) {
+//            System.out.println("file not found");
+//            System.exit(0);
+//        } catch (IOException e) {
+//            System.out.println(e);
+//            System.exit(0);
+//        }
+//    }
 }
